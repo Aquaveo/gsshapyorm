@@ -1,0 +1,20 @@
+# conda_env.yml
+# Configuration file for creating a Conda Environment with dependencies needed for gsshapyorm.
+# Create the environment by running the following command (after installing Miniconda):
+# os: linux
+#   $ conda env create -f conda_env.yml
+#   $ conda activate gsshapyorm
+#   $ python setup.py <install|develop>
+
+name: gsshapyorm
+channels:
+- conda-forge
+- defaults
+dependencies:
+- appdirs
+- geopandas
+- mapkit>=1.2.6
+- numpy
+- pandas
+- psycopg2
+- sqlalchemy

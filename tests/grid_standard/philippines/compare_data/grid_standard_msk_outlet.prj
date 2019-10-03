@@ -1,0 +1,10 @@
+GSSHAPROJECT
+MAP_TYPE                 1
+WATERSHED_MASK           "grid_standard_msk_outlet_outlet.msk"
+GRIDSIZE                 1000.0
+ROWS                     38
+COLS                     33
+#PROJECTION_FILE         "grid_standard_msk_outlet_outlet_prj.pro"
+OUTROW                   9
+OUTCOL                   0
+OUTSLOPE                 0.001

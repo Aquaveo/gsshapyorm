@@ -1,0 +1,47 @@
+#-------------------------------------------------------------------------------
+# appveyor.yml
+# Author: Alan D. Snow, 2017
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#System specifications for Appveyor
+#-------------------------------------------------------------------------------
+#FROM: http://tjelvarolsson.com/blog/how-to-continuously-test-your-python-code-on-windows-using-appveyor/
+# and on: https://github.com/DynamicDevices/mono/blob/master/appveyor.yml
+environment:
+  matrix:
+    - PYTHON_VERSION: "2.7"
+      MINICONDA: "C:\\Miniconda-x64"
+    - PYTHON_VERSION: "3.5"
+      MINICONDA: "C:\\Miniconda3-x64"
+    - PYTHON_VERSION: "3.6"
+      MINICONDA: "C:\\Miniconda3-x64"
+
+matrix:
+  allow_failures:
+  - PYTHON_VERSION: "3.5"
+  - PYTHON_VERSION: "3.6"
+
+install:
+  - 'SET PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%'
+  - conda config --set always_yes yes
+  - conda update -q conda python
+#-----------------------------------------------------------------------------
+# Create conda environment for gsshapyorm
+#-----------------------------------------------------------------------------
+  - conda create -n gsshapyorm python=%PYTHON_VERSION%
+  - activate gsshapyorm
+  - conda config --add channels conda-forge
+  - conda env update -n gsshapyorm -f conda_env.yml
+  # restart environment
+  - deactivate gsshapyorm
+  - activate gsshapyorm
+#-------------------------------------------------------------------------------
+# Install gsshapyorm
+#-------------------------------------------------------------------------------
+  - 'cd %APPVEYOR_BUILD_FOLDER%'
+  - pip install -e .[tests]
+
+build: false
+
+test_script:
+  - py.test --cov-report term-missing --cov=gsshapyorm
