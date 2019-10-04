@@ -116,7 +116,7 @@ class TestGridTemplate(unittest.TestCase):
                     raise
 
     def _list_compare(self, listone, listtwo):
-        for one, two in itertools.izip(listone, listtwo):
+        for one, two in zip(listone, listtwo):
             self.assertEqual(one, two)
 
     def _before_teardown(self):

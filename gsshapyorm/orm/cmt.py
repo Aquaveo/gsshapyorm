@@ -489,7 +489,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         # determine number of layers
         layer_indices = [0]
         if mapTable.name in ('MULTI_LAYER_SOIL', 'RICHARDS_EQN_INFILTRATION_BROOKS'):
-            layer_indices = range(3)
+            layer_indices = list(range(3))
 
         # ----------------------------------------
         # Construct each line in the mapping table

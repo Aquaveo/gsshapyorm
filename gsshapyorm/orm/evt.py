@@ -122,7 +122,7 @@ class ProjectFileEvent(DeclarativeBase):
 
 class YmlFileEvent(yaml.YAMLObject):
     yaml_loader = yaml.SafeLoader
-    yaml_tag = u'!ProjectFileEvent'
+    yaml_tag = '!ProjectFileEvent'
 
     def __init__(self, name, subfolder):
         self.name = name

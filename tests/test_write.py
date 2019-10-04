@@ -9,7 +9,7 @@
 """
 import uuid
 from os import path, listdir, rmdir, mkdir, remove
-from itertools import izip
+
 from unittest import TestCase, main
 
 from gsshapyorm.orm.file_io import *
@@ -421,7 +421,7 @@ class TestWriteMethods(TestCase):
                 self._compare_files(name, name, ext)
 
     def _list_compare(self, listone, listtwo):
-        for one, two in izip(listone, listtwo):
+        for one, two in zip(listone, listtwo):
             self.assertEqual(one, two)
 
     def _delete_extra_dirs(self):

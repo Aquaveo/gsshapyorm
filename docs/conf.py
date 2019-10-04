@@ -60,8 +60,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'GSSHAPY'
-copyright = (u'2014-{0}, Brigham Young University & '
+project = 'GSSHAPY'
+copyright = ('2014-{0}, Brigham Young University & '
              'US Army Engineer Research and Development Center'
              .format(datetime.now().year))
 
@@ -208,8 +208,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'GSSHAPY.tex', u'GSSHAPY Documentation',
-   u'Nathan Swain, Alan D. Snow, and Scott D. Christensen', 'manual'),
+  ('index', 'GSSHAPY.tex', 'GSSHAPY Documentation',
+   'Nathan Swain, Alan D. Snow, and Scott D. Christensen', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -238,8 +238,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'gsshapyorm', u'GSSHAPY Documentation',
-     [u'Nathan Swain', u'Alan D. Snow', u'Scott D. Christensen'], 1)
+    ('index', 'gsshapyorm', 'GSSHAPY Documentation',
+     ['Nathan Swain', 'Alan D. Snow', 'Scott D. Christensen'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -252,8 +252,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'GSSHAPY', u'GSSHAPY Documentation',
-   u'Nathan Swain, Alan D. Snow, and Scott D. Christensen',
+  ('index', 'GSSHAPY', 'GSSHAPY Documentation',
+   'Nathan Swain, Alan D. Snow, and Scott D. Christensen',
    'GSSHAPY', ('An SQLAlchemy ORM for GSSHA model files and a '
                'toolkit to convert gridded input into GSSHA input.'),
    'Miscellaneous'),

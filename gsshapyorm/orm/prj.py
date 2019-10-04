@@ -697,7 +697,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         files_list = []
 
-        for key, value in files.iteritems():
+        for key, value in files.items():
             if value:
                 files_list.append(key)
 

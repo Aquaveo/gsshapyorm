@@ -88,9 +88,9 @@ def pivot(table, left, top, value):
     for left in ysort:
         row = list(left)
         sortedkeys = sorted(rs[left].keys())
-        sortedvalues = map(rs[left].get, sortedkeys)
+        sortedvalues = list(map(rs[left].get, sortedkeys))
         row.extend(sortedvalues)
-        t.append(dict(zip(headings,row)))
+        t.append(dict(list(zip(headings,row))))
 
     return t
 
@@ -100,10 +100,10 @@ if __name__ == "__main__":
     #Build a list of dictionaries
     c = "Employee","Year","Month","Value"
     d = []
-    for y in xrange(2003,2005):
-        for m in xrange(1,13):
-            for e in xrange(1,6):
-                d.append(dict(zip(c,(e,y,m,random.randint(10,90)))))
+    for y in range(2003,2005):
+        for m in range(1,13):
+            for e in range(1,6):
+                d.append(dict(list(zip(c,(e,y,m,random.randint(10,90))))))
     #pivot the list contents using the 'Employee' field for the left column,
     #and the 'Year' field for the top heading and the 'Value' field for each
     #cell in the new table.
