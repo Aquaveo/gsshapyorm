@@ -37,7 +37,7 @@ from ..base.file_base import GsshaPyFileObjectBase
 from .file_io import *
 from ..lib.check_geometry import check_watershed_boundary_geometry
 from ..util.context import tmp_chdir
-from ..util.optional import optional_dependency
+from ..util.optional import import_optional
 
 
 log = logging.getLogger(__name__)
@@ -1134,7 +1134,6 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         return jsonString
 
-    @optional_dependency('gazar')
     def getGridByCard(self, gssha_card_name):
         """
         Returns GDALGrid object of GSSHA grid
@@ -1145,7 +1144,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         Returns:
             GDALGrid
         """
-        from gazar.grid import GDALGrid
+        # Optional import
+        gazar_grid = import_optional('gazar.grid', self.getGridByCard)
 
         with tmp_chdir(self.project_directory):
             if gssha_card_name not in (self.INPUT_MAPS+self.WMS_DATASETS):
@@ -1161,8 +1161,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 raise ValueError("#PROJECTION_FILE card not found ...")
 
             # return gssha grid
-            return GDALGrid(gssha_grid_card.value.strip('"').strip("'"),
-                            gssha_pro_card.value.strip('"').strip("'"))
+            return gazar_grid.GDALGrid(gssha_grid_card.value.strip('"').strip("'"),
+                                       gssha_pro_card.value.strip('"').strip("'"))
 
     def getGrid(self, use_mask=True):
         """
@@ -1181,7 +1181,6 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         return self.getGridByCard(grid_card_name)
 
-    @optional_dependency('gazar')
     def getIndexGrid(self, name):
         """
         Returns GDALGrid object of index map
@@ -1192,7 +1191,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         Returns:
             GDALGrid
         """
-        from gazar.grid import GDALGrid
+        # Optional import
+        gazar_grid = import_optional('gazar.grid', self.getIndexGrid)
 
         index_map = self.mapTableFile.indexMaps.filter_by(name=name).one()
 
@@ -1202,8 +1202,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         with tmp_chdir(self.project_directory):
             # return gssha grid
-            return GDALGrid(index_map.filename,
-                            gssha_pro_card.value.strip('"').strip("'"))
+            return gazar_grid.GDALGrid(index_map.filename,
+                                       gssha_pro_card.value.strip('"').strip("'"))
 
     def getWkt(self):
         """

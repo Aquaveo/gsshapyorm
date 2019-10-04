@@ -19,3 +19,4 @@ dependencies:
 - psycopg2
 - sqlalchemy
 - timezonefinder
+- pyyaml

@@ -9,8 +9,6 @@
 NOTE: This script was found at code.activestate.com/recipes/334695
 """
 
-from past.builtins import xrange
-
 
 def pivot(table, left, top, value):
     """

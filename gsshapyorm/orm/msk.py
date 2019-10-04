@@ -16,7 +16,7 @@ from ..lib.check_geometry import check_watershed_boundary_geometry
 from .map import RasterMapFile
 from .pro import ProjectionFile
 from ..util.context import tmp_chdir
-from ..util.optional import optional_dependency
+from ..util.optional import import_optional
 
 
 class WatershedMaskFile(RasterMapFile):
@@ -43,7 +43,6 @@ class WatershedMaskFile(RasterMapFile):
         self.projectFile = project_file
         self.session = session
 
-    @optional_dependency('gazar')
     def generateFromWatershedShapefile(self,
                                        shapefile_path,
                                        cell_size,
@@ -87,7 +86,8 @@ class WatershedMaskFile(RasterMapFile):
                                        directory=gssha_directory,
                                        name='grid_standard')
         """
-        from gazar.shape import rasterize_shapefile
+        # Optional import
+        gazar_shape = import_optional('gazar.shape', self.generateFromWatershedShapefile)
 
         if not self.projectFile:
             raise ValueError("Must be connected to project file ...")
@@ -115,14 +115,14 @@ class WatershedMaskFile(RasterMapFile):
         # make sure the polygon is valid
         check_watershed_boundary_geometry(shapefile_path)
 
-        gr = rasterize_shapefile(shapefile_path,
-                                 x_cell_size=cell_size,
-                                 y_cell_size=cell_size,
-                                 match_grid=match_grid,
-                                 raster_nodata=0,
-                                 as_gdal_grid=True,
-                                 raster_wkt_proj=wkt_projection,
-                                 convert_to_utm=True)
+        gr = gazar_shape.rasterize_shapefile(shapefile_path,
+                                             x_cell_size=cell_size,
+                                             y_cell_size=cell_size,
+                                             match_grid=match_grid,
+                                             raster_nodata=0,
+                                             as_gdal_grid=True,
+                                             raster_wkt_proj=wkt_projection,
+                                             convert_to_utm=True)
 
         with tmp_chdir(self.projectFile.project_directory):
             gr.to_grass_ascii(out_raster_path, print_nodata=False)

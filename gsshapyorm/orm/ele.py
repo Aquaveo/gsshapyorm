@@ -16,7 +16,7 @@ from osgeo import gdalconst
 
 from .map import RasterMapFile
 from ..util.context import tmp_chdir
-from ..util.optional import optional_dependency
+from ..util.optional import import_optional
 
 
 
@@ -41,7 +41,6 @@ class ElevationGridFile(RasterMapFile):
         # add to project_file
         self.projectFile = project_file
 
-    @optional_dependency('gazar')
     def generateFromRaster(self,
                            elevation_raster,
                            shapefile_path=None,
@@ -82,7 +81,8 @@ class ElevationGridFile(RasterMapFile):
                                        directory=gssha_directory,
                                        name='grid_standard')
         """
-        from gazar.grid import resample_grid
+        # Optional import
+        gazar_grid = import_optional('gazar.grid', self.generateFromRaster)
 
         if not self.projectFile:
             raise ValueError("Must be connected to project file ...")
@@ -97,10 +97,10 @@ class ElevationGridFile(RasterMapFile):
             out_elevation_grid = '{0}.{1}'.format(self.projectFile.name,
                                                   self.fileExtension)
 
-        elevation_grid = resample_grid(elevation_raster,
-                                       mask_grid,
-                                       resample_method=resample_method,
-                                       as_gdal_grid=True)
+        elevation_grid = gazar_grid.resample_grid(elevation_raster,
+                                                  mask_grid,
+                                                  resample_method=resample_method,
+                                                  as_gdal_grid=True)
 
         with tmp_chdir(self.projectFile.project_directory):
             elevation_grid.to_grass_ascii(out_elevation_grid, print_nodata=False)

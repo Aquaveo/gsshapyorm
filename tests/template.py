@@ -6,14 +6,14 @@
 * License: BSD 3-Clause
 ********************************************************************************
 """
-import itertools
-from netCDF4 import Dataset
 from numpy import array
 from numpy.testing import assert_almost_equal
 import os
 from osgeo import gdal
 from shutil import rmtree
 import unittest
+from gsshapyorm.util.optional import import_optional
+
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,13 +27,16 @@ class TestGridTemplate(unittest.TestCase):
         """
         Compare the contents of two netcdf files
         """
+        # Optional import
+        netCDF4 = import_optional('netCDF4', self._compare_netcdf_files)
+
         filenameO = '%s.%s' % (original, ext)
         filePathO = os.path.join(self.readDirectory, filenameO)
         filenameN = '%s.%s' % (new, ext)
         filePathN = os.path.join(self.writeDirectory, filenameN)
 
-        dO = Dataset(filePathO)
-        dN = Dataset(filePathN)
+        dO = netCDF4.Dataset(filePathO)
+        dN = netCDF4.Dataset(filePathN)
 
         assert_almost_equal(dO.variables['time'][:], dN.variables['time'][:], decimal=5)
         assert_almost_equal(dO.variables['lon'][:], dN.variables['lon'][:], decimal=5)

@@ -6,20 +6,13 @@
 * License: BSD 3-Clause
 ********************************************************************************
 """
-from datetime import datetime, timedelta
 from glob import glob
 from os import path
 import unittest
 from shutil import copy
-
-import pytest
-
-from .template import TestGridTemplate
-
-
-from gsshapyorm.modeling import GSSHAModel
 from gsshapyorm.orm import WatershedMaskFile, ElevationGridFile, MapTableFile
 from gsshapyorm.lib import db_tools as dbt
+from .template import TestGridTemplate
 
 
 class TestProjectGenerateBase(TestGridTemplate):
@@ -236,106 +229,6 @@ class TestProjectGenerate(TestProjectGenerateBase):
         # compare main project files
         self._compare_basic_model_idx_maps(project_name)
 
-    def test_generate_basic_project_manager(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel
-        """
-
-        project_name = "grid_standard_basic_model"
-
-        model = GSSHAModel(project_name=project_name,
-                           project_directory=self.gssha_project_directory,
-                           mask_shapefile=self.shapefile_path,
-                           grid_cell_size=1000,
-                           elevation_grid_path=self.elevation_path,
-                           out_hydrograph_write_frequency=15,
-                           roughness=0.013)
-        model.set_event(simulation_start=datetime(2017, 2, 28),
-                        simulation_duration=timedelta(seconds=180*60),
-                        rain_intensity=2.4,
-                        rain_duration=timedelta(seconds=30*60))
-        model.write()
-
-        # compare main project files
-        self._compare_basic_model(project_name)
-
-    def test_generate_basic_project_manager(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel self-calulating
-        grid cell size from elevation grid
-        """
-
-        project_name = "grid_standard_basic_model_auto"
-
-        model = GSSHAModel(project_name=project_name,
-                           project_directory=self.gssha_project_directory,
-                           mask_shapefile=self.shapefile_path,
-                           elevation_grid_path=self.elevation_path,
-                           out_hydrograph_write_frequency=15,
-                           roughness=0.013)
-        model.set_event(simulation_start=datetime(2017, 2, 28),
-                        simulation_duration=timedelta(seconds=180*60),
-                        rain_intensity=2.4,
-                        rain_duration=timedelta(seconds=30*60))
-        model.write()
-
-        # compare main project files
-        self._compare_basic_model(project_name)
-
-    def test_generate_basic_rough_project_manager(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel with roughness
-        """
-
-        project_name = "grid_standard_basic_model_land_cover"
-
-        model = GSSHAModel(project_name=project_name,
-                           project_directory=self.gssha_project_directory,
-                           mask_shapefile=self.shapefile_path,
-                           grid_cell_size=1000,
-                           elevation_grid_path=self.elevation_path,
-                           simulation_timestep=10,
-                           out_hydrograph_write_frequency=15,
-                           land_use_grid=self.land_use_grid,
-                           land_use_grid_id='glcf')
-
-        model.set_event(simulation_start=datetime(2017, 2, 28, 14, 33),
-                        simulation_duration=timedelta(seconds=180 * 60),
-                        rain_intensity=2.4,
-                        rain_duration=timedelta(seconds=30 * 60))
-        model.write()
-
-        # compare main project files
-        self._compare_basic_model_idx_maps(project_name)
-
-    def test_generate_basic_nodb_project_manager(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel with roughness
-        without loading to database
-        """
-
-        project_name = "grid_standard_basic_model_land_cover"
-
-        model = GSSHAModel(project_name=project_name,
-                           project_directory=self.gssha_project_directory,
-                           mask_shapefile=self.shapefile_path,
-                           grid_cell_size=1000,
-                           elevation_grid_path=self.elevation_path,
-                           simulation_timestep=10,
-                           out_hydrograph_write_frequency=15,
-                           land_use_grid=self.land_use_grid,
-                           land_use_grid_id='glcf',
-                           load_rasters_to_db=False)
-
-        model.set_event(simulation_start=datetime(2017, 2, 28, 14, 33),
-                        simulation_duration=timedelta(seconds=180 * 60),
-                        rain_intensity=2.4,
-                        rain_duration=timedelta(seconds=30 * 60))
-        model.write()
-
-        # compare main project files
-        self._compare_basic_model_idx_maps(project_name)
-
 
 class TestProjectGenerateClean(TestProjectGenerateBase):
     def setUp(self):
@@ -370,50 +263,6 @@ class TestProjectGenerateClean(TestProjectGenerateBase):
                  self.elevation_path)
         except OSError:
             pass
-
-
-    def test_multi_polygon_error(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel using a
-        polygon that has saparate parts
-        """
-
-        project_name = "grid_standard_basic_model"
-
-        with pytest.raises(ValueError):
-            model = GSSHAModel(project_name=project_name,
-                               project_directory=self.gssha_project_directory,
-                               mask_shapefile=self.shapefile_path,
-                               grid_cell_size=1000,
-                               elevation_grid_path=self.elevation_path,
-                               simulation_timestep=10,
-                               out_hydrograph_write_frequency=15,
-                               roughness=0.013,
-                               load_rasters_to_db=False)
-
-    @pytest.mark.xfail(reason="Arrays are not almost equal to 5 decimals.")
-    def test_multi_polygon_clean(self):
-        """
-        Tests generating a basic GSSHA project with GSSHAModel using a
-        polygon that has saparate parts
-        """
-
-        project_name = "grid_standard_basic_model_clean"
-
-        model = GSSHAModel(project_name=project_name,
-                           project_directory=self.gssha_project_directory,
-                           mask_shapefile=self.shapefile_path,
-                           grid_cell_size=1000,
-                           elevation_grid_path=self.elevation_path,
-                           simulation_timestep=10,
-                           out_hydrograph_write_frequency=15,
-                           roughness=0.013,
-                           load_rasters_to_db=False,
-                           auto_clean_mask_shapefile=True,
-                           )
-        model.write()
-        # compare main project files
-        self._compare_basic_model(project_name)
 
 
 if __name__ == '__main__':

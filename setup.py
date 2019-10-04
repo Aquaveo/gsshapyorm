@@ -9,7 +9,8 @@ requires = [
     'pandas',
     'psycopg2',
     'sqlalchemy',
-    'timezonefinder'
+    'timezonefinder',
+    'pyyaml'
 ]
 
 setup(name='gsshapyorm',
@@ -22,6 +23,7 @@ setup(name='gsshapyorm',
       license='BSD 3-Clause License',
       keywords='GSSHA, database, object relational model',
       packages=find_packages(),
+      package_data={'': ['grid/land_cover/*.txt']},
       classifiers=[
                 'Intended Audience :: Developers',
                 'Intended Audience :: Science/Research',

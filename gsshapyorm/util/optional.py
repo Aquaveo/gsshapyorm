@@ -7,36 +7,31 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-import functools
 import importlib
 
 
-def optional_dependency(module):
+def import_optional(module, func):
     """
     Attempts to import the given dependencies.
     """
-    def decorator(func):
-        try:
-            importlib.import_module(module)
-        except ImportError:
-            raise ModuleNotFoundError(f'Please install optional dependency "{module}" to use function '
-                                      f'"{func.__name__}()".')
+    try:
+        imported_module = importlib.import_module(module)
+    except ImportError:
+        raise ModuleNotFoundError(f'Please install optional dependency "{module}" '
+                                  f'to use function/method "{func.__name__}()".') from None
 
-        @functools.wraps(func)
-        def _wraps(*args, **kwargs):
-            # call the decorated function
-            return func(*args, **kwargs)
-        return _wraps
-
-    return decorator
+    return imported_module
 
 
 if __name__ == '__main__':
 
-    @optional_dependency('foo')
-    def example(a, b):
+    def example(a, b, c=''):
+        os_path = import_optional('os.path', example)
         print(f'Here is a: {a}')
         print(f'Here is b: {b}')
-        
-    example('hello', 'world')
+        if c:
+            print(f'Here is c: {c}')
+        print(os_path.join(c, a, b))
+
+    example('hello', 'world', c='C:')
 

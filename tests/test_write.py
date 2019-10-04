@@ -8,7 +8,7 @@
 ********************************************************************************
 """
 import uuid
-from os import path, listdir, rmdir, mkdir, remove
+import os
 
 from unittest import TestCase, main
 
@@ -20,17 +20,17 @@ from gsshapyorm.lib import db_tools as dbt
 class TestWriteMethods(TestCase):
     def setUp(self):
         # Find db directory path
-        here = path.abspath(path.dirname(__file__))
+        here = os.path.abspath(os.path.dirname(__file__))
 
         dbName = '%s.db' % uuid.uuid4()
-        self.db_path = path.join(here, 'db', 'standard.db')
+        self.db_path = os.path.join(here, 'db', 'standard.db')
 
         # Create Test DB
         sqlalchemy_url = dbt.init_sqlite_db(self.db_path)
 
         # Define workspace
-        self.readDirectory = path.join(here, 'standard')
-        self.writeDirectory = path.join(here, 'out')
+        self.readDirectory = os.path.join(here, 'standard')
+        self.writeDirectory = os.path.join(here, 'out')
         self.original = 'standard'
         self.name = 'standard'
 
@@ -39,7 +39,7 @@ class TestWriteMethods(TestCase):
                          'run_2016_to_2017')
         for subdir in self.dir_list:
             try:
-                mkdir(path.join(self.readDirectory, subdir))
+                os.mkdir(os.path.join(self.readDirectory, subdir))
             except OSError:
                 pass
 
@@ -59,6 +59,24 @@ class TestWriteMethods(TestCase):
 
         # create write session
         self.writeSession = session_maker()
+
+    def tearDown(self):
+        self.writeSession.close()
+        self._delete_extra_dirs()
+
+        # Remove temp database
+        dbt.del_sqlite_db(self.db_path)
+
+        # Clear out directory
+        fileList = os.listdir(self.writeDirectory)
+
+        for afile in fileList:
+            if afile != ".gitignore":
+                path = os.path.join(self.writeDirectory, afile)
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
 
     def test_project_file_write(self):
         """
@@ -390,9 +408,9 @@ class TestWriteMethods(TestCase):
             original = '{0}_compare'.format(original)
 
         filenameO = '%s.%s' % (original, ext)
-        filePathO = path.join(self.readDirectory, filenameO)
+        filePathO = os.path.join(self.readDirectory, filenameO)
         filenameN = '%s.%s' % (new, ext)
-        filePathN = path.join(self.writeDirectory, filenameN)
+        filePathN = os.path.join(self.writeDirectory, filenameN)
 
         with open(filePathO) as fileO:
             contentsO = fileO.read()
@@ -410,10 +428,10 @@ class TestWriteMethods(TestCase):
         """
         self._delete_extra_dirs()
 
-        fileList2 = listdir(dir2)
+        fileList2 = os.listdir(dir2)
 
         for afile in fileList2:
-            if not path.basename(afile).startswith("."):
+            if not os.path.basename(afile).startswith("."):
                 name = afile.split('.')[0]
                 ext = afile.split('.')[1]
 
@@ -427,27 +445,11 @@ class TestWriteMethods(TestCase):
     def _delete_extra_dirs(self):
         for subdir in self.dir_list:
             try:
-                rmdir(path.join(self.readDirectory, subdir))
+                os.rmdir(os.path.join(self.readDirectory, subdir))
             except OSError:
                 pass
 
-    def tearDown(self):
-        self.writeSession.close()
-        self._delete_extra_dirs()
 
-        # Remove temp database
-        dbt.del_sqlite_db(self.db_path)
-
-        # Clear out directory
-        fileList = listdir(self.writeDirectory)
-
-        for afile in fileList:
-            if afile != ".gitignore":
-                path = path.join(self.writeDirectory, afile)
-                try:
-                    remove(path)
-                except OSError:
-                    pass
 
 
 if __name__ == '__main__':

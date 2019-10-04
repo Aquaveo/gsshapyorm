@@ -34,7 +34,7 @@ from ..lib import parsetools as pt
 from ..lib import cmt_chunk as mtc
 from ..lib.parsetools import valueReadPreprocessor as vrp, valueWritePreprocessor as vwp
 from ..util.context import tmp_chdir
-from ..util.optional import optional_dependency
+from ..util.optional import import_optional
 
 log = logging.getLogger(__name__)
 
@@ -154,7 +154,8 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         # Create GSSHAPY ORM objects with the resulting objects that are
         # returned from the parser functions
-        self._createGsshaPyObjects(mapTables, indexMaps, replaceParamFile, directory, session, spatial, spatialReferenceID)
+        self._createGsshaPyObjects(mapTables, indexMaps, replaceParamFile, directory, session, spatial,
+                                   spatialReferenceID)
 
     def _write(self, session, openFile, replaceParamFile=None, writeIndexMaps=True):
         """
@@ -214,14 +215,16 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         Remove duplicate map table if it exists
         """
 
-        duplicate_map_tables = session.query(MapTable).filter(MapTable.mapTableFile == self).filter(MapTable.name == name).all()
+        duplicate_map_tables = session.query(MapTable).filter(MapTable.mapTableFile == self).filter(
+            MapTable.name == name).all()
         for duplicate_map_table in duplicate_map_tables:
             if duplicate_map_table.indexMap:
                 session.delete(duplicate_map_table.indexMap)
             session.delete(duplicate_map_table)
             session.commit()
 
-    def _createGsshaPyObjects(self, mapTables, indexMaps, replaceParamFile, directory, session, spatial, spatialReferenceID):
+    def _createGsshaPyObjects(self, mapTables, indexMaps, replaceParamFile, directory, session, spatial,
+                              spatialReferenceID):
         """
         Create GSSHAPY Mapping Table ORM Objects Method
         """
@@ -250,7 +253,6 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                 if mt['indexMapName']:
                     mapTable.indexMap = indexMaps[mt['indexMapName']]
 
-
                 # CONTAMINANT_TRANSPORT map table handler
                 if mt['name'] == 'CONTAMINANT_TRANSPORT':
                     for contam in mt['contaminants']:
@@ -260,7 +262,8 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                         # Initialize GSSHAPY MTContaminant object
                         contaminant = MTContaminant(name=contam['name'],
                                                     outputFilename=outputBaseFilename,
-                                                    precipConc=vrp(contam['contamVars']['PRECIP_CONC'], replaceParamFile),
+                                                    precipConc=vrp(contam['contamVars']['PRECIP_CONC'],
+                                                                   replaceParamFile),
                                                     partition=vrp(contam['contamVars']['PARTITION'], replaceParamFile),
                                                     numIDs=contam['contamVars']['NUM_IDS'])
 
@@ -272,7 +275,8 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                                  contaminant, replaceParamFile)
 
                         # Read any output files if they are present
-                        self._readContaminantOutputFiles(directory, outputBaseFilename, session, spatial, spatialReferenceID)
+                        self._readContaminantOutputFiles(directory, outputBaseFilename, session, spatial,
+                                                         spatialReferenceID)
 
                 # SEDIMENTS map table handler
                 elif mt['name'] == 'SEDIMENTS':
@@ -296,12 +300,13 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
             except KeyError:
                 log.info(('Index Map "%s" for Mapping Table "%s" not found in list of index maps in the mapping '
                           'table file. The Mapping Table was not read into the database.') % (
-                          mt['indexMapName'], mt['name']))
+                             mt['indexMapName'], mt['name']))
 
     def _createValueObjects(self, valueList, varList, mapTable, indexMap, contaminant, replaceParamFile):
         """
         Populate GSSHAPY MTValue and MTIndex Objects Method
         """
+
         def assign_values_to_table(value_list, layer_id):
             for i, value in enumerate(value_list):
                 value = vrp(value, replaceParamFile)
@@ -392,7 +397,6 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         # Write value lines from the database
         self._writeValues(session, fileObject, mapTable, None, replaceParamFile)
 
-
     def _writeContaminantTable(self, session, fileObject, mapTable, contaminants, replaceParamFile):
         """
         This method writes the contaminant transport mapping table case.
@@ -426,7 +430,6 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             # Write value lines
             self._writeValues(session, fileObject, mapTable, contaminant, replaceParamFile)
-
 
     def _writeSedimentTable(self, session, fileObject, mapTable, replaceParamFile):
         """
@@ -468,7 +471,6 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
             except:
                 partDiam = '%s' % partDiamString
 
-
             fileObject.write('%s%s%s%s%s%s%s\n' % (
                 sediment.description, ' ' * space1, specGrav, ' ' * 5, partDiam, ' ' * 6, sediment.outputFilename))
 
@@ -493,7 +495,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         # ----------------------------------------
         # Construct each line in the mapping table
-        #-----------------------------------------
+        # -----------------------------------------
 
         # All lines will be compiled into this list
         lines = []
@@ -502,12 +504,12 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
             for layer_index in layer_indices:
                 # Retrieve values for the current index
                 values = session.query(MTValue). \
-                         filter(MTValue.mapTable == mapTable). \
-                         filter(MTValue.contaminant == contaminant). \
-                         filter(MTValue.index == idx). \
-                         filter(MTValue.layer_id == layer_index). \
-                         order_by(MTValue.id). \
-                         all()
+                    filter(MTValue.mapTable == mapTable). \
+                    filter(MTValue.contaminant == contaminant). \
+                    filter(MTValue.index == idx). \
+                    filter(MTValue.layer_id == layer_index). \
+                    order_by(MTValue.id). \
+                    all()
 
                 # NOTE: The second order_by modifier in the query above handles the special ordering of XSEDIMENT columns
                 # in soil erosion properties table (i.e. these columns must be in the same order as the sediments in the
@@ -516,7 +518,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # a contaminant attribute equal to None. Compare usage of this function by _writeMapTable and
                 # _writeContaminant.
 
-                #Value string
+                # Value string
                 valString = ''
 
                 # Define valString
@@ -540,7 +542,8 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # Compile each mapping table line
                 if layer_index == 0:
                     line = '%s%s%s%s%s%s%s\n' % (
-                        idx.index, ' ' * spacing1, idx.description1, ' ' * spacing2, idx.description2, ' ' * spacing3, valString)
+                        idx.index, ' ' * spacing1, idx.description1, ' ' * spacing2, idx.description2, ' ' * spacing3,
+                        valString)
                 else:
                     num_prepend_spaces = len(str(idx.index)) + spacing1 + len(idx.description1) \
                                          + spacing2 + len(idx.description2) + spacing3
@@ -549,9 +552,9 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # Compile each lines into a list
                 lines.append(line)
 
-        #-----------------------------
+        # -----------------------------
         # Define the value header line
-        #-----------------------------
+        # -----------------------------
 
         # Define varString for the header line
         varString = ''
@@ -606,13 +609,11 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         return outputFilename
 
-    @optional_dependency('gazar')
     def addRoughnessMapFromLandUse(self, name,
-                                         session,
-                                         land_use_grid,
-                                         land_use_to_roughness_table=None,
-                                         land_use_grid_id=None,
-                                         ):
+                                   session,
+                                   land_use_grid,
+                                   land_use_to_roughness_table=None,
+                                   land_use_grid_id=None):
         """
         Adds a roughness map from land use file
 
@@ -652,13 +653,14 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                        name='grid_standard')
 
         """
-        from gazar.grid import resample_grid
+        # Optional import
+        gazar_grid = import_optional('gazar.grid', self.addRoughnessMapFromLandUse)
 
         LAND_USE_GRID_TABLES = {
-                                 'nga'  : 'land_cover_nga.txt',
-                                 'glcf' : 'land_cover_glcf_modis.txt',
-                                 'nlcd' : 'land_cover_nlcd.txt',
-                                }
+            'nga': 'land_cover_nga.txt',
+            'glcf': 'land_cover_glcf_modis.txt',
+            'nlcd': 'land_cover_nlcd.txt',
+        }
 
         # read in table
         if isinstance(land_use_to_roughness_table, pd.DataFrame):
@@ -685,10 +687,10 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         land_use_grid = os.path.abspath(land_use_grid)
 
         # resample land use grid to gssha grid
-        land_use_resampled = resample_grid(land_use_grid,
-                                           self.projectFile.getGrid(),
-                                           resample_method=gdalconst.GRA_NearestNeighbour,
-                                           as_gdal_grid=True)
+        land_use_resampled = gazar_grid.resample_grid(land_use_grid,
+                                                      self.projectFile.getGrid(),
+                                                      resample_method=gdalconst.GRA_NearestNeighbour,
+                                                      as_gdal_grid=True)
 
         unique_land_use_ids = np.unique(land_use_resampled.np_array())
 
@@ -742,6 +744,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
             self.projectFile.setCard('MAPPING_TABLE',
                                      '{0}.cmt'.format(self.projectFile.name),
                                      add_quotes=True)
+
 
 class MapTable(DeclarativeBase):
     """
@@ -864,7 +867,7 @@ class MTValue(DeclarativeBase):
     # Value Columns
     variable = Column(String)  #: STRING
     value = Column(Float)  #: FLOAT
-    layer_id = Column(Integer, default=0) # for tables with multiple layers
+    layer_id = Column(Integer, default=0)  # for tables with multiple layers
 
     # Relationship Properties
     mapTable = relationship('MapTable', back_populates='values')  #: RELATIONSHIP
