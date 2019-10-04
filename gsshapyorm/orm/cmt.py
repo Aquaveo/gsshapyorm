@@ -8,7 +8,6 @@
 ********************************************************************************
 """
 
-
 __all__ = ['MapTableFile',
            'MapTable',
            'MTValue',
@@ -35,6 +34,7 @@ from ..lib import parsetools as pt
 from ..lib import cmt_chunk as mtc
 from ..lib.parsetools import valueReadPreprocessor as vrp, valueWritePreprocessor as vwp
 from ..util.context import tmp_chdir
+from ..util.optional import optional_dependency
 
 log = logging.getLogger(__name__)
 
@@ -606,6 +606,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         return outputFilename
 
+    @optional_dependency('gazar')
     def addRoughnessMapFromLandUse(self, name,
                                          session,
                                          land_use_grid,
@@ -651,12 +652,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                        name='grid_standard')
 
         """
-        # TODO: Make this into a decorator
-        try:
-            from gazar.grid import resample_grid
-        except ImportError:
-            raise ModuleNotFoundError('You must install the optional dependency "gazar" to use '
-                                      '"addRoughnessMapFromLandUse()".')
+        from gazar.grid import resample_grid
 
         LAND_USE_GRID_TABLES = {
                                  'nga'  : 'land_cover_nga.txt',

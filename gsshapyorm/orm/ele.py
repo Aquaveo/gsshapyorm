@@ -13,10 +13,12 @@ __all__ = ['ElevationGridFile']
 import os
 
 from osgeo import gdalconst
-from gazar.grid import resample_grid
 
 from .map import RasterMapFile
 from ..util.context import tmp_chdir
+from ..util.optional import optional_dependency
+
+
 
 class ElevationGridFile(RasterMapFile):
     """
@@ -39,6 +41,7 @@ class ElevationGridFile(RasterMapFile):
         # add to project_file
         self.projectFile = project_file
 
+    @optional_dependency('gazar')
     def generateFromRaster(self,
                            elevation_raster,
                            shapefile_path=None,
@@ -79,6 +82,8 @@ class ElevationGridFile(RasterMapFile):
                                        directory=gssha_directory,
                                        name='grid_standard')
         """
+        from gazar.grid import resample_grid
+
         if not self.projectFile:
             raise ValueError("Must be connected to project file ...")
 

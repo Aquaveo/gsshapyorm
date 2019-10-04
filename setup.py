@@ -8,7 +8,8 @@ requires = [
     'numpy',
     'pandas',
     'psycopg2',
-    'sqlalchemy'
+    'sqlalchemy',
+    'timezonefinder'
 ]
 
 setup(name='gsshapyorm',

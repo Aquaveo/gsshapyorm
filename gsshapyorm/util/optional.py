@@ -7,29 +7,32 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-from functools import wraps
+import functools
 import importlib
 
 
-def optional_dependency(*dependencies):
+def optional_dependency(module):
     """
     Attempts to import the given dependencies.
     """
     def decorator(func):
-        for dependency in list(dependencies):
-            try:
-                importlib.import_module(dependencies)
-            except ImportError:
-                raise ModuleNotFoundError(f'The "{dependency}" optional dependency is required to run {func}.')
-        @wraps(func)
-        def _wrap(*args, **kwargs):
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            raise ModuleNotFoundError(f'Please install optional dependency "{module}" to use function '
+                                      f'"{func.__name__}()".')
+
+        @functools.wraps(func)
+        def _wraps(*args, **kwargs):
             # call the decorated function
             return func(*args, **kwargs)
-        return _wrap
+        return _wraps
+
     return decorator
 
 
 if __name__ == '__main__':
+
     @optional_dependency('foo')
     def example(a, b):
         print(f'Here is a: {a}')

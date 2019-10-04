@@ -12,12 +12,11 @@ __all__ = ['WatershedMaskFile']
 
 import os
 
-from gazar.shape import rasterize_shapefile
-
 from ..lib.check_geometry import check_watershed_boundary_geometry
 from .map import RasterMapFile
 from .pro import ProjectionFile
 from ..util.context import tmp_chdir
+from ..util.optional import optional_dependency
 
 
 class WatershedMaskFile(RasterMapFile):
@@ -44,6 +43,7 @@ class WatershedMaskFile(RasterMapFile):
         self.projectFile = project_file
         self.session = session
 
+    @optional_dependency('gazar')
     def generateFromWatershedShapefile(self,
                                        shapefile_path,
                                        cell_size,
@@ -87,6 +87,8 @@ class WatershedMaskFile(RasterMapFile):
                                        directory=gssha_directory,
                                        name='grid_standard')
         """
+        from gazar.shape import rasterize_shapefile
+
         if not self.projectFile:
             raise ValueError("Must be connected to project file ...")
 
