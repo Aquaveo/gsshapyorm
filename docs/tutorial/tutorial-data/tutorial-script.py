@@ -31,10 +31,10 @@ projectFile.read(directory=readDirectory, filename=filename, session=session)
 projectCards = projectFile.projectCards
 
 for card in projectCards:
-    print card
+    print(card)
 
 for card in projectCards:
-    print card.name, card.value
+    print(card.name, card.value)
 
 # Querying the database using the GsshaPy objects ---------------------------------------------------------------------#
 
@@ -42,16 +42,16 @@ for card in projectCards:
 from gsshapyorm.orm import ProjectCard
 cards = session.query(ProjectCard).all()
 for card in cards:
-    print card
+    print(card)
 
 cards = session.query(ProjectCard).filter(ProjectCard.projectFile == projectFile).all()
 for card in cards:
-    print card
+    print(card)
 
 # Equivalently:
 cards = projectFile.projectCards
 for card in cards:
-    print card
+    print(card)
 
 # Write File from a Database ------------------------------------------------------------------------------------------#
 

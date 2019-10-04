@@ -13,7 +13,6 @@ __all__ = ['GridPipeCell',
            'GridPipeFile',
            'GridPipeNode']
 
-from future.utils import iteritems
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship

@@ -16,7 +16,6 @@ __all__ = ['LinkNodeDatasetFile',
 
 import xml.etree.ElementTree as ET
 from datetime import timedelta, datetime
-from future.utils import iteritems
 import logging
 
 from sqlalchemy import Column, ForeignKey, func

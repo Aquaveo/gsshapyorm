@@ -7,9 +7,8 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-from future.utils import iteritems
-
 from . import parsetools as pt
+
 
 def cardChunk(key, chunk):
     """

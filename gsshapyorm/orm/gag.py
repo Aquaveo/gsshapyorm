@@ -14,7 +14,6 @@ __all__ = ['PrecipFile',
            'PrecipValue',
            'PrecipGage']
 
-from future.utils import iteritems
 from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.types import Integer, DateTime, String, Float
 from sqlalchemy.orm import relationship
