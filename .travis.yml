@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #.travis.yml
 #-------------------------------------------------------------------------------
-# Author: Alan D. Snow, 2016; Nathan Swain 2019
+# Author: Alan D. Snow, 2016
 #-------------------------------------------------------------------------------
 # System specifications for Travis CI
 #-------------------------------------------------------------------------------
@@ -9,18 +9,12 @@ language: c
 os:
   - linux
   - osx
-
 env:
   - TRAVIS_PYTHON_VERSION="3.5"
   - TRAVIS_PYTHON_VERSION="3.6"
   - TRAVIS_PYTHON_VERSION="3.7"
-
-stages:
-  - name: lint
-    if: branch = master
-  - name: test
-    if: branch = master
-
+matrix:
+  fast_finish: true
 notifications:
   email: false
 
@@ -54,33 +48,19 @@ before_install:
 - conda list
 - pip list
 #-------------------------------------------------------------------------------
-# Installing gsshapyorm
+#Installing gsshapyorm
 #--------------------------------------------------------------------------------
 install:
 - cd $TRAVIS_BUILD_DIR
 - pip install -e .[tests]
 
 #-------------------------------------------------------------------------------
-# Testing GSSHApy
+#Testing GSSHApy
 #-------------------------------------------------------------------------------
 script:
 - pytest --cov-report term-missing --cov=gsshapyorm
-
 #-------------------------------------------------------------------------------
 # Coveralls stats for code coverage
 #-------------------------------------------------------------------------------
 after_success:
   - coveralls
-
-#-------------------------------------------------------------------------------
-# Jobs
-#-------------------------------------------------------------------------------
-jobs:
-  include:
-    - stage: lint
-      install:
-        - pip install flake8
-      script:
-        - flake8
-      after_success:
-        - skip
