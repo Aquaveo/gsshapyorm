@@ -8,3 +8,4 @@
 """
 from .log import log_to_file, log_to_console
 from .metadata import version
+from .optional import import_optional
