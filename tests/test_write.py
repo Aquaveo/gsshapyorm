@@ -12,7 +12,9 @@ import os
 
 from unittest import TestCase, main
 
-from gsshapyorm.orm.file_io import *
+from gsshapyorm.orm.file_io import MapTableFile, ProjectFileEventManager, PrecipFile, ChannelInputFile, \
+    StormPipeNetworkFile, HmetFile, NwsrfsFile, OrographicGageFile, GridPipeFile, GridStreamFile, TimeSeriesFile, \
+    OutputLocationFile, RasterMapFile, ProjectionFile, ReplaceParamFile, ReplaceValFile, LinkNodeDatasetFile, IndexMap
 from gsshapyorm.orm import ProjectFile
 from gsshapyorm.lib import db_tools as dbt
 
@@ -22,7 +24,7 @@ class TestWriteMethods(TestCase):
         # Find db directory path
         here = os.path.abspath(os.path.dirname(__file__))
 
-        dbName = '%s.db' % uuid.uuid4()
+        self.dbName = '%s.db' % uuid.uuid4()
         self.db_path = os.path.join(here, 'db', 'standard.db')
 
         # Create Test DB
@@ -117,7 +119,6 @@ class TestWriteMethods(TestCase):
 
         # Test
         self._compare_files(self.original, self.name, 'gag')
-
 
     def test_grid_pipe_file_write(self):
         """
@@ -270,7 +271,7 @@ class TestWriteMethods(TestCase):
         assert c.subfolder == "run_2014_to_2017_3"
 
         c1 = prjEvtMng.add_event(name="event2", subfolder="run_2014_to_2017",
-                                session=self.writeSession)
+                                 session=self.writeSession)
         assert c1.name == "event2"
         assert c1.subfolder == "run_2014_to_2017_4"
 
@@ -306,8 +307,8 @@ class TestWriteMethods(TestCase):
         """
         # Retrieve file from database
         idx = self.writeSession.query(IndexMap).\
-                   filter(IndexMap.filename == 'Soil.idx').\
-                   one()
+            filter(IndexMap.filename == 'Soil.idx').\
+            one()
 
         # Invoke write method
         idx.write(session=self.writeSession,
@@ -392,8 +393,8 @@ class TestWriteMethods(TestCase):
         """
         # Retrieve file from database
         instance = self.writeSession.query(fileIO).\
-                        filter(fileIO.fileExtension == ext).\
-                        one()
+            filter(fileIO.fileExtension == ext).\
+            one()
 
         # Invoke write method
         instance.write(session=self.writeSession,
@@ -448,8 +449,6 @@ class TestWriteMethods(TestCase):
                 os.rmdir(os.path.join(self.readDirectory, subdir))
             except OSError:
                 pass
-
-
 
 
 if __name__ == '__main__':

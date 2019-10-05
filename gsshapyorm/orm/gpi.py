@@ -17,7 +17,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import parsetools as pt
 
@@ -187,7 +187,6 @@ class GridPipeCell(DeclarativeBase):
     cellI = Column(Integer)  #: INTEGER
     cellJ = Column(Integer)  #: INTEGER
     numPipes = Column(Integer)  #: INTEGER
-
 
     # Relationship Properties
     gridPipeFile = relationship('GridPipeFile', back_populates='gridPipeCells')  #: RELATIONSHIP

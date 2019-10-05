@@ -14,7 +14,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.types import Integer, String, LargeBinary
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 

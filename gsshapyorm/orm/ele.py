@@ -19,7 +19,6 @@ from ..util.context import tmp_chdir
 from ..util.optional import import_optional
 
 
-
 class ElevationGridFile(RasterMapFile):
     """
     Object interface for generating an elevation grid.

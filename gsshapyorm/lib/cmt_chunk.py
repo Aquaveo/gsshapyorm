@@ -7,7 +7,6 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-
 import logging
 import shlex
 import numpy as np
@@ -29,6 +28,7 @@ def indexMapChunk(key, chunk):
         result['filename'] = pt.relativePath(sline[1])
 
     return result
+
 
 def mapTableChunk(key, chunk):
     # Global variables
@@ -91,7 +91,7 @@ def mapTableChunk(key, chunk):
                 valDict = _extractValues(line)
 
             num_layers_loaded += 1
-            if not soil_3d_layer or num_layers_loaded >=3:
+            if not soil_3d_layer or num_layers_loaded >= 3:
                 valueList.append(valDict)
                 valDict = {}
                 num_layers_loaded = 0
@@ -106,17 +106,15 @@ def mapTableChunk(key, chunk):
 
     return result
 
+
 def contamChunk(key, chunk):
     # Global variables
     contamList = []
     valDict = dict()
-    numVars = {'NUM_IDS': None,
-               'MAX_NUMBER_CELLS': None,
-               'NUM_SED': None,
-               'NUM_CONTAM': None}
+    numVars = {'NUM_IDS': None, 'MAX_NUMBER_CELLS': None, 'NUM_SED': None,
+               'NUM_CONTAM': int(chunk[1].strip().split()[1])}
 
     # Extract the number of contaminants
-    numVars['NUM_CONTAM'] = int(chunk[1].strip().split()[1])
 
     # Check if there are any contaminants. No need
     # to process further if there are 0.
@@ -129,7 +127,6 @@ def contamChunk(key, chunk):
     for line in chunk:
         sline = line.strip().split()
         token = sline[0]
-
 
         if token == key:
             mtName = sline[0]
@@ -180,6 +177,7 @@ def contamChunk(key, chunk):
 
     return result
 
+
 def sedimentChunk(key, chunk):
     # Global Variables
     valueList = []
@@ -220,6 +218,7 @@ def sedimentChunk(key, chunk):
 
     return result
 
+
 def _buildVarList(sline, mapTableName, numVars):
     # Global constant
     IGNORE = ['ID', 'DESCRIPTION1', 'DESCRIPTION2']
@@ -228,7 +227,7 @@ def _buildVarList(sline, mapTableName, numVars):
     varList = []
     # Extract variable names from the header line which
     # begins with the 'ID' token.
-    if mapTableName =='SOIL_EROSION_PROPS':
+    if mapTableName == 'SOIL_EROSION_PROPS':
         if numVars['NUM_SED']:
             for item in sline:
                 if item in SOIL_EROSION:
@@ -242,11 +241,12 @@ def _buildVarList(sline, mapTableName, numVars):
 
     return varList
 
+
 def _extractValues(line):
     valDict = dict()
     # Extract value line via slices
-    valDict['index'] = line[:6].strip() # First 7 columns
-    valDict['description1'] = line[6:46].strip() # Next 40 columns
-    valDict['description2'] = line[46:86].strip() # Next 40 columns
-    valDict['values'] = line[86:].strip().split() # Remaining columns
+    valDict['index'] = line[:6].strip()  # First 7 columns
+    valDict['description1'] = line[6:46].strip()  # Next 40 columns
+    valDict['description2'] = line[46:86].strip()  # Next 40 columns
+    valDict['values'] = line[86:].strip().split()  # Remaining columns
     return valDict

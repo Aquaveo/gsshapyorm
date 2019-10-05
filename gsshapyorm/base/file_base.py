@@ -7,11 +7,9 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-
 from io import open as io_open
 import logging
 import os
-
 from sqlalchemy.exc import IntegrityError
 
 __all__ = ['GsshaPyFileObjectBase']
@@ -25,7 +23,7 @@ class GsshaPyFileObjectBase:
 
     This base class provides two methods for reading and writing files: ``read()`` and ``write()``. These methods in
     turn call the private ``_read()`` and ``_write()`` methods which must be implemented by child classes.
-    """
+    """  # noqa: E501
     # Error Messages
     COMMIT_ERROR_MESSAGE = 'Ensure the file is not empty and try again.'
 
@@ -50,7 +48,7 @@ class GsshaPyFileObjectBase:
                 spatial is True. Defaults to srid 4236.
             replaceParamFile (:class:`gsshapyorm.orm.ReplaceParamFile`, optional): ReplaceParamFile instance. Use this if
                 the file you are reading contains replacement parameters.
-        """
+        """  # noqa: E501
 
         # Read parameter derivatives
         path = os.path.join(directory, filename)
@@ -90,7 +88,7 @@ class GsshaPyFileObjectBase:
             name (str): The name of the file that will be created (including the file extension is optional).
             replaceParamFile (:class:`gsshapyorm.orm.ReplaceParamFile`, optional): ReplaceParamFile instance. Use this if
                 the file you are writing contains replacement parameters.
-        """
+        """  # noqa: E501
 
         # Assemble Path to file
         name_split = name.split('.')
@@ -105,7 +103,7 @@ class GsshaPyFileObjectBase:
         # Run name preprocessor method if present
         try:
             name = self._namePreprocessor(name)
-        except:
+        except Exception:
             'DO NOTHING'
 
         if extension == '':
@@ -131,7 +129,7 @@ class GsshaPyFileObjectBase:
         except IntegrityError:
             # Raise special error if the commit fails due to empty files
             log.error('Commit to database failed. %s' % errorMessage)
-        except:
+        except Exception:
             # Raise other errors as normal
             raise
 
@@ -168,7 +166,7 @@ class GsshaPyFileObjectBase:
                 parameters are used in place of normal variables. If this is not None, then the user expects there
                 to be replacement variables in the file. Use the gsshapyorm.lib.parsetools.valueReadPreprocessor() to
                 handle these.
-        """
+        """  # noqa: E501
 
     def _write(self, session, openFile, replaceParamFile):
         """
@@ -199,7 +197,7 @@ class GsshaPyFileObjectBase:
                 parameters are used in place of normal variables. If this is not None, then the user expects there
                 to be replacement variables in the file. Use the gsshapyorm.lib.parsetools.valueWritePreprocessor() to
                 handle these.
-        """
+        """  # noqa: E501
 
     def _namePreprocessor(self, name):
         """

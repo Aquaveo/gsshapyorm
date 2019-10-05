@@ -7,7 +7,6 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-
 __all__ = ['GeometricObjectBase']
 
 
@@ -32,7 +31,7 @@ class GeometricObjectBase:
 
         Returns:
             str: KML string representation of geometry.
-        """
+        """  # noqa: E501
         statement = """
                     SELECT ST_AsKml({0}) AS kml
                     FROM {1}
@@ -57,7 +56,7 @@ class GeometricObjectBase:
 
         Returns:
             str: Well Known Text string representation of geometry.
-        """
+        """  # noqa: E501
         statement = """
                     SELECT ST_AsText({0}) AS wkt
                     FROM {1}
@@ -82,7 +81,7 @@ class GeometricObjectBase:
 
         Returns:
             str: GeoJSON string representation of geometry.
-        """
+        """  # noqa: E501
         statement = """
                     SELECT ST_AsGeoJSON({0}) AS json
                     FROM {1}
@@ -107,7 +106,7 @@ class GeometricObjectBase:
 
         Returns:
             str: PostGIS spatial reference ID.
-        """
+        """  # noqa: E501
         statement = """
                     SELECT ST_SRID({0}) AS srid
                     FROM {1}

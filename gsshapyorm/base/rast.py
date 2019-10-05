@@ -10,7 +10,6 @@
 
 import os
 from zipfile import ZipFile
-
 from mapkit.ColorRampGenerator import ColorRampEnum
 from mapkit.RasterConverter import RasterConverter
 
@@ -53,8 +52,8 @@ class RasterObjectBase:
 
         Returns:
             str: KML string
-        """
-        if type(self.raster) != type(None):
+        """  # noqa: E501
+        if self.raster is None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -113,8 +112,8 @@ class RasterObjectBase:
 
         Returns:
             str: KML string
-        """
-        if type(self.raster) != type(None):
+        """  # noqa: E501
+        if self.raster is None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -182,8 +181,8 @@ class RasterObjectBase:
 
         Returns:
             (str, list): Returns a KML string and a list of binary strings that are the PNG images.
-        """
-        if type(self.raster) != type(None):
+        """  # noqa: E501
+        if self.raster is None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -235,8 +234,8 @@ class RasterObjectBase:
 
         Returns:
             str: GRASS ASCII string.
-        """
-        if type(self.raster) != type(None):
+        """  # noqa: E501
+        if self.raster is None:
             # Make sure the raster field is valid
             converter = RasterConverter(sqlAlchemyEngineOrSession=session)
 

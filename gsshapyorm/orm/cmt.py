@@ -26,7 +26,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from .lnd import LinkNodeDatasetFile
 from ..base.file_base import GsshaPyFileObjectBase
 from .idx import IndexMap
@@ -56,7 +56,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
     The GSSHA documentation used to design this object can be found by following these links:
     http://www.gsshawiki.com/Mapping_Table:Mapping_Table_File
-    """
+    """  # noqa: E501
     __tablename__ = 'cmt_map_table_files'
     tableName = __tablename__  #: Database tablename
 
@@ -247,9 +247,9 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # Associate MapTable with this MapTableFile and IndexMaps
                 mapTable.mapTableFile = self
 
-                ## NOTE: Index maps are associated wth contaminants for CONTAMINANT_TRANSPORT map
-                ## tables. The SEDIMENTS map table are associated with index maps via the
-                ## SOIL_EROSION_PROPS map table.
+                # NOTE: Index maps are associated wth contaminants for CONTAMINANT_TRANSPORT map
+                # tables. The SEDIMENTS map table are associated with index maps via the
+                # SOIL_EROSION_PROPS map table.
                 if mt['indexMapName']:
                     mapTable.indexMap = indexMaps[mt['indexMapName']]
 
@@ -363,7 +363,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                          session=session,
                                          spatial=spatial,
                                          spatialReferenceID=spatialReferenceID)
-            except:
+            except Exception:
                 log.warning('Attempted to read Contaminant Transport Output file {0}, but failed.'.format(chanFile))
 
     def _writeMapTable(self, session, fileObject, mapTable, replaceParamFile):
@@ -415,12 +415,12 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
             partitionString = vwp(contaminant.partition, replaceParamFile)
             try:
                 precipConc = '%.2f' % precipConcString
-            except:
+            except Exception:
                 precipConc = '%s' % precipConcString
 
             try:
                 partition = '%.2f' % partitionString
-            except:
+            except Exception:
                 partition = '%s' % partitionString
 
             # Write global variables for the contaminant
@@ -463,12 +463,12 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             try:
                 specGrav = '%.6f' % specGravString
-            except:
+            except Exception:
                 specGrav = '%s' % specGravString
 
             try:
                 partDiam = '%.6f' % partDiamString
-            except:
+            except Exception:
                 partDiam = '%s' % partDiamString
 
             fileObject.write('%s%s%s%s%s%s%s\n' % (
@@ -511,11 +511,12 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                     order_by(MTValue.id). \
                     all()
 
-                # NOTE: The second order_by modifier in the query above handles the special ordering of XSEDIMENT columns
-                # in soil erosion properties table (i.e. these columns must be in the same order as the sediments in the
-                # sediments table. Accomplished by using the sedimentID field). Similarly, the contaminant filter is only
-                # used in the case of the contaminant transport table. Values that don't belong to a contaminant will have
-                # a contaminant attribute equal to None. Compare usage of this function by _writeMapTable and
+                # NOTE: The second order_by modifier in the query above handles the special ordering of XSEDIMENT
+                # columns in soil erosion properties table (i.e. these columns must be in the same order as the
+                # sediments in the sediments table. Accomplished by using the sedimentID field). Similarly, the
+                # contaminant filter is only used in the case of the contaminant transport table. Values that don't
+                # belong to a contaminant will have a contaminant attribute equal to None. Compare usage of this
+                # function by _writeMapTable and
                 # _writeContaminant.
 
                 # Value string
@@ -529,7 +530,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                     processedValue = vwp(val.value, replaceParaFile)
                     try:
                         numString = '%.6f' % processedValue
-                    except:
+                    except Exception:
                         numString = '%s' % processedValue
 
                     valString = '%s%s%s' % (valString, numString, ' ' * 3)
@@ -789,14 +790,15 @@ class MapTable(DeclarativeBase):
         self.maxSoilID = maxSoilID
 
     def __repr__(self):
-        return '<MapTable: Name=%s, IndexMap=%s, NumIDs=%s, MaxNumCells=%s, NumSediments=%s, NumContaminants=%s, MaxSoilID=%s>' % (
-            self.name,
-            self.idxMapID,
-            self.numIDs,
-            self.maxNumCells,
-            self.numSed,
-            self.numContam,
-            self.maxSoilID)
+        return '<MapTable: Name=%s, IndexMap=%s, NumIDs=%s, MaxNumCells=%s, NumSediments=%s, ' \
+               'NumContaminants=%s, MaxSoilID=%s>' % (
+                self.name,
+                self.idxMapID,
+                self.numIDs,
+                self.maxNumCells,
+                self.numSed,
+                self.numContam,
+                self.maxSoilID)
 
     def __eq__(self, other):
         return (self.name == other.name and
@@ -925,12 +927,13 @@ class MTContaminant(DeclarativeBase):
         self.numIDs = numIDs
 
     def __repr__(self):
-        return '<MTContaminant: Name=%s, Precipitation Concentration=%s, Partition=%s, OutputFilename=%s, NumIDs=%s>' % (
-            self.name,
-            self.precipConc,
-            self.partition,
-            self.outputFilename,
-            self.numIDs)
+        return '<MTContaminant: Name=%s, Precipitation Concentration=%s, Partition=%s, OutputFilename=%s, ' \
+               'NumIDs=%s>' % (
+                self.name,
+                self.precipConc,
+                self.partition,
+                self.outputFilename,
+                self.numIDs)
 
     def __eq__(self, other):
         return (self.name == other.name and

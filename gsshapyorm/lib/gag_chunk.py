@@ -15,8 +15,8 @@ def eventChunk(key, lines):
     """
     Parse EVENT chunks
     """
-    ## NOTE: RADAR file format not supported currently.
-    ## TODO: Add Support for RADAR file format type values
+    # NOTE: RADAR file format not supported currently.
+    # TODO: Add Support for RADAR file format type values
 
     # Contants
     KEYWORDS = ('EVENT',
@@ -40,8 +40,8 @@ def eventChunk(key, lines):
     result = {'description': None,
               'nrgag': None,
               'nrpds': None,
-              'coords':[],
-              'valLines':[]}
+              'coords': [],
+              'valLines': []}
 
     chunks = pt.chunk(KEYWORDS, lines)
 
@@ -68,7 +68,7 @@ def eventChunk(key, lines):
                 try:
                     # Extract the event description
                     desc = schunk[3]
-                except:
+                except Exception:
                     # Handle case where the event description is blank
                     desc = ""
 

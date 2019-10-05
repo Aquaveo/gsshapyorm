@@ -7,34 +7,26 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-from sqlalchemy.ext.declarative import declarative_base
-
-# Base class for all of model classes
-DeclarativeBase = declarative_base()
-
-# Global metadata. This is used to
-# Initialize a database with the
-# Appropriate tables. See db_tools
-metadata = DeclarativeBase.metadata
 
 # Import GSSHAPY Model Classes/Tables
-from .prj import *
-from .idx import *
-from .cmt import *
-from .ele import *
-from .tim import *
-from .gag import *
-from .cif import *
-from .hmet import *
-from .gst import *
-from .spn import *
-from .gpi import *
-from .snw import *
-from .loc import *
-from .map import *
-from .msk import *
-from .pro import *
-from .rep import *
-from .lnd import *
-from .generic import *
-from .wms_dataset import *
+from .declarative_base import *  # noqa: F401, F403
+from .prj import *  # noqa: F401, F403
+from .idx import *  # noqa: F401, F403
+from .cmt import *  # noqa: F401, F403
+from .ele import *  # noqa: F401, F403
+from .tim import *  # noqa: F401, F403
+from .gag import *  # noqa: F401, F403
+from .cif import *  # noqa: F401, F403
+from .hmet import *  # noqa: F401, F403
+from .gst import *  # noqa: F401, F403
+from .spn import *  # noqa: F401, F403
+from .gpi import *  # noqa: F401, F403
+from .snw import *  # noqa: F401, F403
+from .loc import *  # noqa: F401, F403
+from .map import *  # noqa: F401, F403
+from .msk import *  # noqa: F401, F403
+from .pro import *  # noqa: F401, F403
+from .rep import *  # noqa: F401, F403
+from .lnd import *  # noqa: F401, F403
+from .generic import *  # noqa: F401, F403
+from .wms_dataset import *  # noqa: F401, F403

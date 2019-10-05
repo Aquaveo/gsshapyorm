@@ -11,10 +11,18 @@
 
 # Create a GsshaPy PostGIS database
 from gsshapyorm.lib import db_tools as dbt
-sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(username='gsshapyorm', host='localhost', database='gsshapy_tutorial', port='5432', password='pass')
+from sqlalchemy.orm import create_session
+
+sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(
+    username='gsshapyorm',
+    host='localhost',
+    database='gsshapy_tutorial',
+    port='5432',
+    password='pass'
+)
 
 # Create SQLAlchemy session object for db interaction
-session = dbt.create_session(sqlalchemy_url)
+session = create_session(sqlalchemy_url)
 
 # Read Files to a Database --------------------------------------------------------------------------------------------#
 
@@ -67,8 +75,14 @@ newProjectFile.write(session=session, directory=writeDirectory, name=name)
 
 # Create new session
 from gsshapyorm.lib import db_tools as dbt
-sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(username='gsshapyorm', host='localhost', database='gsshapy_tutorial', port='5432', password='pass')
-all_session = dbt.create_session(sqlalchemy_url)
+sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(
+    username='gsshapyorm',
+    host='localhost',
+    database='gsshapy_tutorial',
+    port='5432',
+    password='pass'
+)
+all_session = create_session(sqlalchemy_url)
 
 # Instantiate a new ProjectFile object
 from gsshapyorm.orm import ProjectFile
@@ -89,8 +103,14 @@ newProjectFileAll.writeProject(session=all_session, directory=writeDirectory, na
 
 # Create a new session and a project file object as before
 from gsshapyorm.lib import db_tools as dbt
-sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(username='gsshapyorm', host='localhost', database='gsshapy_tutorial', port='5432', password='pass')
-spatial_session = dbt.create_session(sqlalchemy_url)
+sqlalchemy_url = dbt.sqlalchemy_url = dbt.init_postgresql_db(
+    username='gsshapyorm',
+    host='localhost',
+    database='gsshapy_tutorial',
+    port='5432',
+    password='pass'
+)
+spatial_session = create_session(sqlalchemy_url)
 from gsshapyorm.orm import ProjectFile
 spatialProjectFile = ProjectFile()
 
@@ -100,13 +120,15 @@ filename = 'parkcity.prj'
 spatial = True
 srid = 26912
 raster2pgsql_path = '/path_to/raster2pgsql'
-spatialProjectFile.readProject(directory=readDirectory, projectFileName=filename, session=spatial_session, spatial=spatial, spatialReferenceID=srid, raster2pgsqlPath=raster2pgsql_path)
+spatialProjectFile.readProject(directory=readDirectory, projectFileName=filename, session=spatial_session,
+                               spatial=spatial, spatialReferenceID=srid, raster2pgsqlPath=raster2pgsql_path)
 
 # Read an individual file with spatial objects (using same inputs as above)
 from gsshapyorm.orm import RasterMapFile
 maskMap = RasterMapFile()
 filename = 'parkcity.msk'
-maskMap.read(directory=readDirectory, filename=filename, session=spatial_session, spatial=spatial, spatialReferenceID=srid, raster2pgsqlPath=raster2pgsql_path)
+maskMap.read(directory=readDirectory, filename=filename, session=spatial_session, spatial=spatial,
+             spatialReferenceID=srid, raster2pgsqlPath=raster2pgsql_path)
 
 # Demonstrate spatial visualization methods
 from gsshapyorm.orm import ProjectFile

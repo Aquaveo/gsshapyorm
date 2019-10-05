@@ -22,6 +22,7 @@ def connectChunk(key, chunk):
 
     return result
 
+
 def sjuncChunk(key, chunk):
     """
     Parse Super Junction (SJUNC) Chunk Method
@@ -40,6 +41,7 @@ def sjuncChunk(key, chunk):
 
     return result
 
+
 def slinkChunk(key, lines):
     """
     Parse Super Link (SLINK) Chunk Method
@@ -48,10 +50,10 @@ def slinkChunk(key, lines):
                 'NODE',
                 'PIPE')
 
-    result = {'slinkNumber':None,
-              'numPipes':None,
-              'nodes':[],
-              'pipes':[]}
+    result = {'slinkNumber': None,
+              'numPipes': None,
+              'nodes': [],
+              'pipes': []}
 
     chunks = pt.chunk(KEYWORDS, lines)
 

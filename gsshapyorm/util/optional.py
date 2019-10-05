@@ -34,4 +34,3 @@ if __name__ == '__main__':
         print(os_path.join(c, a, b))
 
     example('hello', 'world', c='C:')
-

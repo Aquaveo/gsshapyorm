@@ -18,7 +18,7 @@ from mapkit.sqlatypes import Raster
 from mapkit.RasterLoader import RasterLoader
 from mapkit.RasterConverter import RasterConverter
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..base.rast import RasterObjectBase
 
@@ -42,7 +42,7 @@ class RasterMapFile(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
     visualizations.
 
     See: http://www.gsshawiki.com/Project_File:Project_File
-    """
+    """  # noqa:E501
     __tablename__ = 'raster_maps'
 
     # Public Table Metadata
@@ -86,9 +86,10 @@ class RasterMapFile(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
         """
         # remove existing grid if exists
         existing_elev = session.query(RasterMapFile).\
-                                      filter(RasterMapFile.projectFile == project_file).\
-                                      filter(RasterMapFile.fileExtension == self.fileExtension).\
-                                      all()
+            filter(RasterMapFile.projectFile == project_file).\
+            filter(RasterMapFile.fileExtension == self.fileExtension).\
+            all()
+
         if existing_elev:
             session.delete(existing_elev)
             session.commit()
@@ -128,7 +129,7 @@ class RasterMapFile(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
         self.filename = filename
 
         self._load_raster_text(path)
-        
+
         if spatial:
             # Get well known binary from the raster file using the MapKit RasterLoader
             wkbRaster = RasterLoader.grassAsciiRasterToWKB(session=session,
@@ -162,7 +163,7 @@ class RasterMapFile(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
 
     def write(self, session, directory, name, replaceParamFile=None, **kwargs):
         """
-        Wrapper for GsshaPyFileObjectBase write method 
+        Wrapper for GsshaPyFileObjectBase write method
         """
         if self.raster is not None or self.rasterText is not None:
             super(RasterMapFile, self).write(session, directory, name, replaceParamFile, **kwargs)

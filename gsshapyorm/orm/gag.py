@@ -18,7 +18,7 @@ from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.types import Integer, DateTime, String, Float
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import pivot, parsetools as pt, gag_chunk as gak
 
@@ -37,7 +37,7 @@ class PrecipFile(DeclarativeBase, GsshaPyFileObjectBase):
     can have several gages and a time series of values for each gage.
 
     See: http://www.gsshawiki.com/Precipitation:Spatially_and_Temporally_Varied_Precipitation
-    """
+    """  # noqa: E501
     __tablename__ = 'gag_precipitation_files'
 
     tableName = __tablename__  #: Database tablename
@@ -110,8 +110,8 @@ class PrecipFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # code.activestate.com/recipes/334695
                 pivotedValues = pivot.pivot(valList, ('DateTime', 'ValueType'), ('Gage',), 'Value')
 
-                ## TODO: Create custom pivot function that can work with sqlalchemy
-                ## objects explicitly without the costly conversion.
+                # TODO: Create custom pivot function that can work with sqlalchemy
+                # objects explicitly without the costly conversion.
 
                 # Create an empty set for obtaining a list of unique gages
                 gages = session.query(PrecipGage). \
@@ -150,7 +150,7 @@ class PrecipFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         Create GSSHAPY PrecipEvent, PrecipValue, and PrecipGage Objects Method
         """
-        ## TODO: Add Support for RADAR file format type values
+        # TODO: Add Support for RADAR file format type values
 
         # Create GSSHAPY PrecipEvent
         event = PrecipEvent(description=eventChunk['description'],
@@ -214,7 +214,6 @@ class PrecipEvent(DeclarativeBase):
         self.description = description
         self.nrGag = nrGag
         self.nrPds = nrPds
-
 
     def __repr__(self):
         return '<PrecipEvent: Description=%s, NumGages=%s, NumPeriods=%s>' % (self.description, self.nrGag, self.nrPds)

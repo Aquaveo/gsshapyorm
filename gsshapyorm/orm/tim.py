@@ -17,7 +17,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib.pivot import pivot
 
@@ -55,7 +55,8 @@ class TimeSeriesFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         GsshaPyFileObjectBase.__init__(self)
 
-    def _read(self, directory, filename, session, path, name, extension, spatial=None, spatialReferenceID=None, replaceParamFile=None):
+    def _read(self, directory, filename, session, path, name, extension, spatial=None, spatialReferenceID=None,
+              replaceParamFile=None):
         """
         Generic Time Series Read from File Method
         """
@@ -157,8 +158,8 @@ class TimeSeriesFile(DeclarativeBase, GsshaPyFileObjectBase):
                     tsVal.timeSeries = series[index]
         except IndexError:
             log.warning(('%s was opened, but the contents of the file were empty.'
-                     'This file will not be read into the database.') % filename)
-        except:
+                         'This file will not be read into the database.') % filename)
+        except Exception:
             raise
 
 
