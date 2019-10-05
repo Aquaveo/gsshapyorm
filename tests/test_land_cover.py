@@ -7,13 +7,12 @@
 ********************************************************************************
 """
 from os import path
-import unittest
 from shutil import copy, copytree
-
-from .template import TestGridTemplate
-
+import unittest
+import pytest
 from gsshapyorm.orm import ProjectFile
 from gsshapyorm.lib import db_tools as dbt
+from .template import TestGridTemplate
 
 
 class TestLandCover(TestGridTemplate):
@@ -42,6 +41,7 @@ class TestLandCover(TestGridTemplate):
         """
         Tests adding land cover to map table
         """
+        pytest.importorskip("gazar")
         land_use_to_roughness_table = path.join(path.dirname(path.realpath(__file__)),
                                                 '..', 'gsshapyorm',
                                                 'grid', 'land_cover',
@@ -89,6 +89,7 @@ class TestLandCover(TestGridTemplate):
         """
         Tests adding land cover to map table run twice
         """
+        pytest.importorskip("gazar")
         # Create Test DB
         sqlalchemy_url, sql_engine = dbt.init_sqlite_memory()
         session_maker = dbt.get_sessionmaker(sqlalchemy_url, sql_engine)

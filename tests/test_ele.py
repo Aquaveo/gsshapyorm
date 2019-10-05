@@ -8,13 +8,12 @@
 """
 from glob import glob
 from os import path
-import unittest
 from shutil import copy, copytree
-
-from .template import TestGridTemplate
-
+import unittest
+import pytest
 from gsshapyorm.orm import ElevationGridFile
 from gsshapyorm.lib import db_tools as dbt
+from .template import TestGridTemplate
 
 
 class TestElevation(TestGridTemplate):
@@ -79,6 +78,7 @@ class TestElevation(TestGridTemplate):
         """
         Tests generating an elevation grid from raster
         """
+        pytest.importorskip("gazar")
         self.ele_file.generateFromRaster(self.elevation_path,
                                          self.shapefile_path)
 

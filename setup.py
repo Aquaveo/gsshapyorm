@@ -43,6 +43,9 @@ setup(name='gsshapyorm',
             'sphinx',
             'sphinx_rtd_theme',
             'sphinxcontrib-napoleon',
+        ],
+        'grid': [
+            'gazar',
         ]
       },
       )

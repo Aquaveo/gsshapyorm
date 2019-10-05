@@ -7,15 +7,13 @@
 ********************************************************************************
 """
 from glob import glob
-import unittest
+from os import path
 from shutil import copy
-
-from .template import TestGridTemplate
-
+import unittest
+import pytest
 from gsshapyorm.orm import WatershedMaskFile
 from gsshapyorm.lib import db_tools as dbt
-
-from os import path
+from .template import TestGridTemplate
 
 
 class TestMask(TestGridTemplate):
@@ -83,6 +81,7 @@ class TestMask(TestGridTemplate):
         """
         Tests rasterize_shapefile using cell size to ascii in utm
         """
+        pytest.importorskip("gazar")
         project_name = 'grid_standard_msk'
         mask_name = '{0}.msk'.format(project_name)
         self.msk_file.generateFromWatershedShapefile(self.shapefile_path,
@@ -100,6 +99,7 @@ class TestMask(TestGridTemplate):
         Tests rasterize_shapefile using cell size to ascii in utm
         Then add outlet information
         """
+        pytest.importorskip("gazar")
         project_name = 'grid_standard_msk_outlet'
         mask_name = '{0}.msk'.format(project_name)
         self.msk_file.generateFromWatershedShapefile(self.shapefile_path,
@@ -112,6 +112,7 @@ class TestMask(TestGridTemplate):
                                         name=project_name)
         # compare results
         self._compare_output(project_name)
+
 
 if __name__ == '__main__':
     unittest.main()

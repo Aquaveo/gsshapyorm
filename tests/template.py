@@ -23,38 +23,6 @@ class TestGridTemplate(unittest.TestCase):
     readDirectory = os.path.join(SCRIPT_DIR, 'grid_standard')
     writeDirectory = os.path.join(SCRIPT_DIR, 'out')
 
-    def _compare_netcdf_files(self, original, new, ext="nc"):
-        """
-        Compare the contents of two netcdf files
-        """
-        # Optional import
-        netCDF4 = import_optional('netCDF4', self._compare_netcdf_files)
-
-        filenameO = '%s.%s' % (original, ext)
-        filePathO = os.path.join(self.readDirectory, filenameO)
-        filenameN = '%s.%s' % (new, ext)
-        filePathN = os.path.join(self.writeDirectory, filenameN)
-
-        dO = netCDF4.Dataset(filePathO)
-        dN = netCDF4.Dataset(filePathN)
-
-        assert_almost_equal(dO.variables['time'][:], dN.variables['time'][:], decimal=5)
-        assert_almost_equal(dO.variables['lon'][:], dN.variables['lon'][:], decimal=5)
-        assert_almost_equal(dO.variables['lat'][:], dN.variables['lat'][:], decimal=5)
-        assert_almost_equal(dO.variables['precipitation'][:], dN.variables['precipitation'][:], decimal=5)
-        assert_almost_equal(dO.variables['pressure'][:], dN.variables['pressure'][:], decimal=4)
-        assert_almost_equal(dO.variables['relative_humidity'][:], dN.variables['relative_humidity'][:], decimal=4)
-        assert_almost_equal(dO.variables['wind_speed'][:], dN.variables['wind_speed'][:], decimal=5)
-        assert_almost_equal(dO.variables['direct_radiation'][:], dN.variables['direct_radiation'][:], decimal=4)
-        assert_almost_equal(dO.variables['diffusive_radiation'][:], dN.variables['diffusive_radiation'][:], decimal=5)
-        assert_almost_equal(dO.variables['temperature'][:], dN.variables['temperature'][:], decimal=5)
-        assert_almost_equal(dO.variables['cloud_cover'][:], dN.variables['cloud_cover'][:], decimal=5)
-
-        self.assertEqual(dO.getncattr("proj4"),dN.getncattr("proj4"))
-        assert_almost_equal(dO.getncattr("geotransform"),dN.getncattr("geotransform"))
-        dO.close()
-        dN.close()
-
     def _compare_files(self, original, new, raster=False, precision=7):
         """
         Compare the contents of two files

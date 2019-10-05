@@ -8,8 +8,9 @@
 """
 from glob import glob
 from os import path
-import unittest
 from shutil import copy
+import unittest
+import pytest
 from gsshapyorm.orm import WatershedMaskFile, ElevationGridFile, MapTableFile
 from gsshapyorm.lib import db_tools as dbt
 from .template import TestGridTemplate
@@ -106,7 +107,7 @@ class TestProjectGenerate(TestProjectGenerateBase):
         """
         Tests generating a basic GSSHA project
         """
-
+        pytest.importorskip("gazar")
         project_name = "grid_standard_basic"
         # Instantiate GSSHAPY object for reading to database
         # Create Test DB
@@ -169,7 +170,7 @@ class TestProjectGenerate(TestProjectGenerateBase):
         """
         Tests generating a basic GSSHA project with land cover
         """
-
+        pytest.importorskip("gazar")
         project_name = "grid_standard_basic_land_cover"
         # Instantiate GSSHAPY object for reading to database
         project_manager, db_sessionmaker = \
