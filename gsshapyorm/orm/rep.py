@@ -15,7 +15,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.types import Integer, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -167,9 +167,8 @@ class ReplaceValFile(DeclarativeBase, GsshaPyFileObjectBase):
 
 class ReplaceValLine(DeclarativeBase):
     """
-    Object containing data for a single line in the replacement value file. Each line represents a new realization of the
-    parameters listed in the replacement parameter file.
-    """
+    Object containing data for a single line in the replacement value file. Each line represents a new realization of the parameters listed in the replacement parameter file.
+    """  # noqa:E501
     __tablename__ = 'rep_replace_val_lines'
 
     tableName = __tablename__  #: Database tablename
@@ -183,7 +182,3 @@ class ReplaceValLine(DeclarativeBase):
 
     # Relationship Properties
     replaceValFile = relationship('ReplaceValFile', back_populates='lines')  #: RELATIONSHIP
-
-
-            
-

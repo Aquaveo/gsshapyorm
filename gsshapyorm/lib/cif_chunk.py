@@ -24,6 +24,7 @@ def cardChunk(key, chunk):
     return {'card': sline[0],
             'values': values}
 
+
 def connectChunk(key, chunk):
     """
     Parse Card Chunk Method
@@ -40,6 +41,7 @@ def connectChunk(key, chunk):
               'upLinks': upLinks}
 
     return result
+
 
 def linkChunk(key, chunk):
     """
@@ -61,6 +63,7 @@ def linkChunk(key, chunk):
         # Reservoir link type handler
         result = reservoirLink(chunk)
     return result
+
 
 def structureLink(lines):
     """
@@ -102,7 +105,7 @@ def structureLink(lines):
     result = {'type': 'STRUCTURE',
               'header': {'link': None,
                          'numstructs': None},
-              'structures':[]}
+              'structures': []}
 
     chunks = pt.chunk(KEYWORDS, lines)
 
@@ -156,6 +159,7 @@ def structureLink(lines):
 
     return result
 
+
 def xSectionLink(lines):
     """
     Parse Cross Section Links Method
@@ -206,8 +210,6 @@ def xSectionLink(lines):
                 'NODE',
                 'XSEC')
 
-
-
     ERODE = ('TRAPEZOID_ERODE',
              'TRAP_ERODE',
              'TRAP_SUBSURFACE_ERODE',
@@ -228,15 +230,15 @@ def xSectionLink(lines):
                   'BREAKPOINT_SUBSURFACE_ERODE',
                   'BREAKPOINT_ERODE_SUBSURFACE')
 
-    result  =  {'type': 'XSEC',
-                'header': {'link': None,
-                           'dx': None,
-                           'xSecType': None,
-                           'nodes': None,
-                           'erode': False,
-                           'subsurface': False},
-                'xSection': None,
-                'nodes': []}
+    result = {'type': 'XSEC',
+              'header': {'link': None,
+                         'dx': None,
+                         'xSecType': None,
+                         'nodes': None,
+                         'erode': False,
+                         'subsurface': False},
+              'xSection': None,
+              'nodes': []}
 
     chunks = pt.chunk(KEYWORDS, lines)
 
@@ -271,6 +273,7 @@ def xSectionLink(lines):
 
     return result
 
+
 def reservoirLink(lines):
     """
     Parse RESERVOIR Link Method
@@ -288,17 +291,17 @@ def reservoirLink(lines):
                 'MAXWSE',
                 'NUMPTS')
 
-    result  =  {'header': {'link': None,
-                           'res_minwse': None,
-                           'res_initwse': None,
-                           'res_maxwse': None,
-                           'res_numpts': None,
-                           'minwse': None,
-                           'initwse': None,
-                           'maxwse': None,
-                           'numpts': None},
-                'type': None,
-                'points': []}
+    result = {'header': {'link': None,
+                         'res_minwse': None,
+                         'res_initwse': None,
+                         'res_maxwse': None,
+                         'res_numpts': None,
+                         'minwse': None,
+                         'initwse': None,
+                         'maxwse': None,
+                         'numpts': None},
+              'type': None,
+              'points': []}
 
     pair = {'i': None,
             'j': None}
@@ -311,7 +314,6 @@ def reservoirLink(lines):
         # Parse each chunk in the chunk list
         for chunk in chunkList:
             schunk = chunk[0].strip().split()
-
 
             # Cases
             if key in ('NUMPTS', 'RES_NUMPTS'):
@@ -339,6 +341,7 @@ def reservoirLink(lines):
                 # Header variables handler
                 result['header'][key.lower()] = schunk[1]
     return result
+
 
 def nodeChunk(lines):
     """
@@ -368,6 +371,7 @@ def nodeChunk(lines):
                 result[key.lower()] = schunk[1]
 
     return result
+
 
 def xSectionChunk(lines):
     """
@@ -424,6 +428,7 @@ def xSectionChunk(lines):
                 # Extract value
                 result[key.lower()] = schunk[1]
     return result
+
 
 def structureChunk(keywords, resultDict, lines):
     """

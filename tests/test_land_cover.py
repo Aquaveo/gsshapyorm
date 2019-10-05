@@ -59,12 +59,8 @@ class TestLandCover(TestGridTemplate):
                                   projectFileName=self.gssha_project_file,
                                   session=db_session)
 
-        project_manager.mapTableFile.addRoughnessMapFromLandUse("roughness",
-                                                                db_session,
-                                                                self.land_use_grid,
-                                                                land_use_to_roughness_table,
-                                                                #land_use_grid_id='glcf',
-                                                                )
+        project_manager.mapTableFile.addRoughnessMapFromLandUse("roughness", db_session, self.land_use_grid,
+                                                                land_use_to_roughness_table)
         # WRITE OUT UPDATED GSSHA PROJECT FILE
         project_manager.writeInput(session=db_session,
                                    directory=self.gssha_project_directory,

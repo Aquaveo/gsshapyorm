@@ -20,7 +20,7 @@ from mapkit.sqlatypes import Raster
 from mapkit.RasterLoader import RasterLoader
 from mapkit.RasterConverter import RasterConverter
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..base.rast import RasterObjectBase
 
@@ -44,7 +44,7 @@ class IndexMap(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
     visualizations.
 
     See: http://www.gsshawiki.com/Mapping_Table:Index_Maps
-    """
+    """  # noqa:E501
     __tablename__ = 'idx_index_maps'
 
     # Public Table Metadata
@@ -141,14 +141,14 @@ class IndexMap(DeclarativeBase, GsshaPyFileObjectBase, RasterObjectBase):
         """
 
         # Initiate file
-        if name != None:
+        if name is not None:
             filename = '%s.%s' % (name, self.fileExtension)
             filePath = os.path.join(directory, filename)
         else:
             filePath = os.path.join(directory, self.filename)
 
         # If the raster field is not empty, write from this field
-        if type(self.raster) != type(None):
+        if self.raster is not None:
             # Configure RasterConverter
             converter = RasterConverter(session)
 

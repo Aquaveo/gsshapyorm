@@ -39,16 +39,17 @@ before_install:
 #-----------------------------------------------------------------------------
 # Create conda environment for gsshapyorm
 #-----------------------------------------------------------------------------
-- conda create -n gsshapyorm python=$TRAVIS_PYTHON_VERSION
-- source activate gsshapyorm
-- conda config --add channels conda-forge
-- conda env update -n gsshapyorm -f conda_env.yml
+# build test environment
+- conda env create -f conda_env.yml python=$TRAVIS_PYTHON_VERSION
 # restart environment
-- source deactivate
 - source activate gsshapyorm
+# debugging info
+- conda info
+- conda list
+- pip list
 #-------------------------------------------------------------------------------
 #Installing gsshapyorm
-#-------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------
 install:
 - cd $TRAVIS_BUILD_DIR
 - pip install -e .[tests]
@@ -57,7 +58,7 @@ install:
 #Testing GSSHApy
 #-------------------------------------------------------------------------------
 script:
-- py.test --cov-report term-missing --cov=gsshapyorm
+- pytest --cov-report term-missing --cov=gsshapyorm
 #-------------------------------------------------------------------------------
 # Coveralls stats for code coverage
 #-------------------------------------------------------------------------------

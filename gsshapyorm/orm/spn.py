@@ -18,7 +18,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import parsetools as pt, spn_chunk as spc
 
@@ -332,16 +332,17 @@ class SuperNode(DeclarativeBase):
         self.orificeDiameter = orificeDiameter
 
     def __repr__(self):
-        return '<SuperNode: NodeNumber=%s, GroundSurfaceElev=%s, InvertElev=%s, ManholeSA=%s, NodeInletCode=%s, CellI=%s, CellJ=%s, WeirSideLength=%s, OrificeDiameter=%s>' % (
-            self.nodeNumber,
-            self.groundSurfaceElev,
-            self.invertElev,
-            self.manholeSA,
-            self.nodeInletCode,
-            self.cellI,
-            self.cellJ,
-            self.weirSideLength,
-            self.orificeDiameter)
+        return '<SuperNode: NodeNumber=%s, GroundSurfaceElev=%s, InvertElev=%s, ManholeSA=%s, NodeInletCode=%s, ' \
+               'CellI=%s, CellJ=%s, WeirSideLength=%s, OrificeDiameter=%s>' % (
+                self.nodeNumber,
+                self.groundSurfaceElev,
+                self.invertElev,
+                self.manholeSA,
+                self.nodeInletCode,
+                self.cellI,
+                self.cellJ,
+                self.weirSideLength,
+                self.orificeDiameter)
 
 
 class Pipe(DeclarativeBase):
@@ -386,16 +387,17 @@ class Pipe(DeclarativeBase):
         self.drainSpacing = drainSpacing
 
     def __repr__(self):
-        return '<Pipe: PipeNumber=%s, XSecType=%s, DiameterOrHeight=%s, Width=%s, Slope=%s, Roughness=%s, Length=%s, Conductance=%s, DrainSpacing=%s>' % (
-            self.pipeNumber,
-            self.xSecType,
-            self.diameterOrHeight,
-            self.width,
-            self.slope,
-            self.roughness,
-            self.length,
-            self.conductance,
-            self.drainSpacing)
+        return '<Pipe: PipeNumber=%s, XSecType=%s, DiameterOrHeight=%s, Width=%s, Slope=%s, Roughness=%s, Length=%s, ' \
+               'Conductance=%s, DrainSpacing=%s>' % (
+                self.pipeNumber,
+                self.xSecType,
+                self.diameterOrHeight,
+                self.width,
+                self.slope,
+                self.roughness,
+                self.length,
+                self.conductance,
+                self.drainSpacing)
 
 
 class SuperJunction(DeclarativeBase):
@@ -441,16 +443,17 @@ class SuperJunction(DeclarativeBase):
         self.orificeDiameter = orificeDiameter
 
     def __repr__(self):
-        return '<SuperJunction: SjuncNumber=%s, GroundSurfaceElev=%s, InvertElev=%s, ManholeSA=%s, InletCode=%s, LinkOrCellI=%s, NodeOrCellJ=%s, WeirSideLength=%s, OrificeDiameter=%s>' % (
-            self.sjuncNumber,
-            self.groundSurfaceElev,
-            self.invertElev,
-            self.manholeSA,
-            self.inletCode,
-            self.linkOrCellI,
-            self.nodeOrCellJ,
-            self.weirSideLength,
-            self.orificeDiameter)
+        return '<SuperJunction: SjuncNumber=%s, GroundSurfaceElev=%s, InvertElev=%s, ManholeSA=%s, InletCode=%s, ' \
+               'LinkOrCellI=%s, NodeOrCellJ=%s, WeirSideLength=%s, OrificeDiameter=%s>' % (
+                self.sjuncNumber,
+                self.groundSurfaceElev,
+                self.invertElev,
+                self.manholeSA,
+                self.inletCode,
+                self.linkOrCellI,
+                self.nodeOrCellJ,
+                self.weirSideLength,
+                self.orificeDiameter)
 
 
 class Connection(DeclarativeBase):

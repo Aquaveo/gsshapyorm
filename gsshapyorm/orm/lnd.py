@@ -25,7 +25,7 @@ from sqlalchemy.orm import relationship
 from mapkit.GeometryConverter import GeometryConverter
 from mapkit.ColorRampGenerator import ColorRampEnum, ColorRampGenerator
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import parsetools as pt
 
@@ -156,7 +156,7 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             str: KML string
-        """
+        """  # noqa:E501
         # Constants
         DECMIAL_DEGREE_METER = 0.00001
         OPTIMAL_Z_MAX = 300  # meters
@@ -190,7 +190,8 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
             colorRampEnum = styles['colorRampEnum']
 
             if isinstance(colorRampEnum, dict):
-                colorRamp = ColorRampGenerator.generateCustomColorRamp(colorRampEnum['colors'], colorRampEnum['interpolatedPoints'])
+                colorRamp = ColorRampGenerator.generateCustomColorRamp(colorRampEnum['colors'],
+                                                                       colorRampEnum['interpolatedPoints'])
             elif isinstance(colorRampEnum, int):
                 colorRamp = ColorRampGenerator.generateDefaultColorRamp(colorRampEnum)
 
@@ -211,14 +212,14 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
         # Calculate min and max values for the color ramp
         minValue = 0.0
         maxValue = session.query(func.max(NodeDataset.value)).\
-                           filter(NodeDataset.linkNodeDatasetFile == self).\
-                           filter(NodeDataset.status == 1).\
-                           scalar()
+            filter(NodeDataset.linkNodeDatasetFile == self).\
+            filter(NodeDataset.status == 1).\
+            scalar()
 
         avgValue = session.query(func.avg(NodeDataset.value)).\
-                           filter(NodeDataset.linkNodeDatasetFile == self).\
-                           filter(NodeDataset.status == 1).\
-                           scalar()
+            filter(NodeDataset.linkNodeDatasetFile == self).\
+            filter(NodeDataset.status == 1).\
+            scalar()
 
         # Calculate automatic zScale if not assigned
         if 'zScale' not in styles:
@@ -341,7 +342,6 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
                     nodeElevationValue = ET.SubElement(nodeElevationData, 'value')
                     nodeElevationValue.text = str(nodeDataset.value)
 
-
         kmlString = ET.tostring(kml)
 
         if path:
@@ -349,8 +349,6 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
                 f.write(kmlString)
 
         return kmlString
-
-
 
     def _read(self, directory, filename, session, path, name, extension, spatial, spatialReferenceID, replaceParamFile):
         """
@@ -445,8 +443,6 @@ class LinkNodeDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
                                 nodeDataset.value = float(spLinkLine[1])
                                 nodeDataset.linkDataset = linkDataset
                                 nodeDataset.linkNodeDatasetFile = self
-
-
 
     def _write(self, session, openFile, replaceParamFile):
         """

@@ -20,7 +20,7 @@ from sqlalchemy.orm import relationship
 
 from mapkit import lookupSpatialReferenceID
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -76,7 +76,6 @@ class ProjectionFile(DeclarativeBase, GsshaPyFileObjectBase):
             srid = lookupSpatialReferenceID(f.read())
 
         return srid
-
 
     def _read(self, directory, filename, session, path, name, extension, spatial, spatialReferenceID, replaceParamFile):
         """

@@ -12,7 +12,6 @@ import os
 from osgeo import gdal
 from shutil import rmtree
 import unittest
-from gsshapyorm.util.optional import import_optional
 
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))

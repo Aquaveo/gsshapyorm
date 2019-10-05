@@ -19,7 +19,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -89,7 +89,6 @@ class GridStreamFile(DeclarativeBase, GsshaPyFileObjectBase):
 
                     # Create GSSHAPY object
                     self._createGsshaPyObjects(result)
-
 
     def _write(self, session, openFile, replaceParamFile):
         """

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import String, Integer
 import yaml
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -62,10 +62,7 @@ class ProjectFileEventManager(DeclarativeBase, GsshaPyFileObjectBase):
         """
         ProjectFileEvent Write to File Method
         """
-        evt_sim_folders = self.events.filter(
-                        ProjectFileEvent.subfolder
-                            .like("{0}_%".format(subfolder))
-                    )
+        evt_sim_folders = self.events.filter(ProjectFileEvent.subfolder. like("{0}_%".format(subfolder)))
         max_id = 0
         num_search = re.compile(r'{0}_(\d+)'.format(subfolder), re.IGNORECASE)
         for prj_event in evt_sim_folders:
@@ -94,6 +91,7 @@ class ProjectFileEventManager(DeclarativeBase, GsshaPyFileObjectBase):
         return self.add_event(name=event_name, subfolder=event_name,
                               session=session)
 
+
 class ProjectFileEvent(DeclarativeBase):
     __tablename__ = "project_file_event"
 
@@ -112,6 +110,7 @@ class ProjectFileEvent(DeclarativeBase):
                         name=self.name,
                         subfolder=self.subfolder)
                 )
+
     def as_yml(self):
         """
         Return yml compatible version of self
@@ -134,6 +133,7 @@ class YmlFileEvent(yaml.YAMLObject):
                         name=self.name,
                         subfolder=self.subfolder)
                 )
+
     def as_orm(self):
         """
         Returns ORM version of self

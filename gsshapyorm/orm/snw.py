@@ -18,7 +18,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, DateTime, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -28,7 +28,7 @@ class NwsrfsFile(DeclarativeBase, GsshaPyFileObjectBase):
 
     The contents of this file is abstracted into one supporting object: :class:`.NwsrfsRecord`.
 
-    See: `GSSHAWIKI <http://www.gsshawiki.com/Snow_Card_Inputs_-_Optional>`_ 
+    See: `GSSHAWIKI <http://www.gsshawiki.com/Snow_Card_Inputs_-_Optional>`_
     """
     __tablename__ = 'snw_nwsrfs_files'
 
@@ -160,19 +160,19 @@ class NwsrfsRecord(DeclarativeBase):
         self.fua = fua
         self.plwhc = plwhc
 
-
     def __repr__(self):
-        return '<ElevationNWSRFS: LowerElev=%s, UpperElev=%s, MFMin=%s, MFMax=%s, SCF=%s, FRUse=%s, TIPM=%s, NMF=%s, FUA=%s, PLWHC=%s>' % (
-            self.lowerElev,
-            self.upperElev,
-            self.mfMin,
-            self.mfMax,
-            self.scf,
-            self.frUse,
-            self.tipm,
-            self.nmf,
-            self.fua,
-            self.plwhc)
+        return '<ElevationNWSRFS: LowerElev=%s, UpperElev=%s, MFMin=%s, MFMax=%s, SCF=%s, FRUse=%s, TIPM=%s, ' \
+               'NMF=%s, FUA=%s, PLWHC=%s>' % (
+                self.lowerElev,
+                self.upperElev,
+                self.mfMin,
+                self.mfMax,
+                self.scf,
+                self.frUse,
+                self.tipm,
+                self.nmf,
+                self.fua,
+                self.plwhc)
 
 
 class OrographicGageFile(DeclarativeBase, GsshaPyFileObjectBase):
@@ -181,7 +181,7 @@ class OrographicGageFile(DeclarativeBase, GsshaPyFileObjectBase):
 
     The contents of this file is abstracted into one supporting object: :class:`.OrographicMeasurement`.
 
-    See: `GSSHAWIKI <http://www.gsshawiki.com/Snow_Card_Inputs_-_Optional>`_ 
+    See: `GSSHAWIKI <http://www.gsshawiki.com/Snow_Card_Inputs_-_Optional>`_
     """
     __tablename__ = 'snw_orographic_gage_files'
 

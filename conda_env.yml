@@ -17,6 +17,6 @@ dependencies:
 - numpy
 - pandas
 - psycopg2
+- pyyaml
 - sqlalchemy
 - timezonefinder
-- pyyaml

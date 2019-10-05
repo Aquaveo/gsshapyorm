@@ -7,7 +7,6 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-
 import logging
 import shlex
 import re
@@ -51,19 +50,19 @@ def chunk(keywords, lines):
     """
     chunks = dict()
     chunk = []
-      
+
     # Create an empty dictionary using all the keywords
     for keyword in keywords:
         chunks[keyword] = []
-    
+
     # Populate dictionary with lists of chunks associated
-    # with the keywords in the list   
+    # with the keywords in the list
     for line in lines:
         if line.strip():
             token = line.split()[0]
             if token in keywords:
-                chunk = [line]   
-                chunks[token].append(chunk)   
+                chunk = [line]
+                chunks[token].append(chunk)
             else:
                 chunk.append(line)
 
@@ -139,7 +138,7 @@ def valueWritePreprocessor(valueString, replaceParamsFile=None):
                         if targetParam.id == parameterID:
                             variableString = targetParam.targetVariable
                             break
-            except:
+            except Exception:
                 pass
 
     return variableString

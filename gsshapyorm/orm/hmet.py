@@ -17,7 +17,7 @@ from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, DateTime, String
 from sqlalchemy.orm import relationship
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 
 
@@ -83,14 +83,14 @@ class HmetFile(DeclarativeBase, GsshaPyFileObjectBase):
                     # Associate HmetRecord with HmetFile
                     hmetRecord.hmetFile = self
 
-                except:
+                except Exception:
                     pass
 
     def _write(self, session, openFile, replaceParamFile):
         """
         Write HMET WES to File Method
         """
-        ## TODO: Ensure Other HMET Formats are supported
+        # TODO: Ensure Other HMET Formats are supported
         hmetRecords = self.hmetRecords
 
         for record in hmetRecords:
@@ -148,12 +148,13 @@ class HmetRecord(DeclarativeBase):
         self.globalRad = globalRad
 
     def __repr__(self):
-        return '<HmetRecord: DateTime=%s, BarometricPressure=%s, RelHumidity=%s, TotalSkyCover=%s, WindSpeed=%s, DryBulbTemp=%s, DirectRad=%s, GlobalRad=%s>' % (
-            self.hmetDateTime,
-            self.barometricPress,
-            self.relHumidity,
-            self.totalSkyCover,
-            self.windSpeed,
-            self.dryBulbTemp,
-            self.directRad,
-            self.globalRad)
+        return '<HmetRecord: DateTime=%s, BarometricPressure=%s, RelHumidity=%s, TotalSkyCover=%s, WindSpeed=%s, ' \
+               'DryBulbTemp=%s, DirectRad=%s, GlobalRad=%s>' % (
+                self.hmetDateTime,
+                self.barometricPress,
+                self.relHumidity,
+                self.totalSkyCover,
+                self.windSpeed,
+                self.dryBulbTemp,
+                self.directRad,
+                self.globalRad)

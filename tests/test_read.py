@@ -10,8 +10,9 @@
 from builtins import zip
 import unittest
 import os
-
-from gsshapyorm.orm.file_io import *
+from gsshapyorm.orm.file_io import MapTableFile, ProjectFileEventManager, PrecipFile, ChannelInputFile, \
+    StormPipeNetworkFile, HmetFile, NwsrfsFile, OrographicGageFile, GridPipeFile, GridStreamFile, TimeSeriesFile, \
+    OutputLocationFile, RasterMapFile, ProjectionFile, ReplaceParamFile, ReplaceValFile, LinkNodeDatasetFile, IndexMap
 from gsshapyorm.orm import ProjectFile
 from gsshapyorm.lib import db_tools as dbt
 
@@ -151,7 +152,6 @@ class TestReadMethods(unittest.TestCase):
         for mapTableR, mapTableQ in zip(mapTablesR, mapTablesQ):
             self.assertEqual(mapTableR, mapTableQ)
 
-
             # Check sediments
             sedsR = mapTableR.sediments
             sedsQ = mapTableQ.sediments
@@ -170,7 +170,6 @@ class TestReadMethods(unittest.TestCase):
                 contamR = valR.contaminant
                 contamQ = valR.contaminant
 
-
                 if contamR is not None and contamQ is not None:
                     self.assertEqual(contamR, contamQ)
 
@@ -187,8 +186,8 @@ class TestReadMethods(unittest.TestCase):
         gagR, gagQ = self._read_n_query(fileIO=PrecipFile,
                                         directory=self.directory,
                                         filename='standard.gag')
-
-        # Tests
+        # TODO: Tests
+        self.assertIsNotNone(gagR, gagQ)
 
     def test_grid_pipe_file_read(self):
         """
@@ -198,7 +197,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.gpi')
 
-        # Tests
+        # TODO: Tests
 
     def test_grid_stream_file_read(self):
         """
@@ -208,7 +207,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.gst')
 
-        # Tests
+        # TODO: Tests
 
     def test_hmet_file_read(self):
         """
@@ -218,7 +217,7 @@ class TestReadMethods(unittest.TestCase):
                                           directory=self.directory,
                                           filename='hmet_wes.hmt')
 
-        # Tests
+        # TODO: Tests
 
     def test_output_location_file_read(self):
         """
@@ -228,7 +227,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.ihl')
 
-        # Tests
+        # TODO: Tests
 
     def test_link_node_dataset_file_read(self):
         """
@@ -238,7 +237,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.cdp')
 
-        # Tests
+        # TODO: Tests
 
     def test_raster_map_file_read(self):
         """
@@ -248,7 +247,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.msk')
 
-        # Tests
+        # TODO: Tests
 
     def test_projection_file_read(self):
         """
@@ -258,7 +257,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard_prj.pro')
 
-        # Tests
+        # TODO: Tests
 
     def test_replace_param_file_read(self):
         """
@@ -268,7 +267,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='replace_param.txt')
 
-        # Tests
+        # TODO: Tests
 
     def test_replace_val_file_read(self):
         """
@@ -278,7 +277,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='replace_val.txt')
 
-        # Tests
+        # TODO: Tests
 
     def test_nwsrfs_file_read(self):
         """
@@ -288,7 +287,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='nwsrfs_elev.txt')
 
-        # Tests
+        # TODO: Tests
 
     def test_oro_gage_file_read(self):
         """
@@ -298,7 +297,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='oro_gages.txt')
 
-        # Tests
+        # TODO: Tests
 
     def test_storm_pipe_network_file_read(self):
         """
@@ -308,7 +307,7 @@ class TestReadMethods(unittest.TestCase):
                                         directory=self.directory,
                                         filename='standard.spn')
 
-        # Tests
+        # TODO: Tests
 
     def test_time_series_file_read(self):
         """
@@ -344,7 +343,7 @@ class TestReadMethods(unittest.TestCase):
 
         # Tests
         assert ymlR.events.count() == 3
-        a = ymlR.events.filter_by(subfolder='run_2015_to_2017').one()
+        ymlR.events.filter_by(subfolder='run_2015_to_2017').one()
 
         # cleanup
         for subdir in dir_list:
@@ -371,7 +370,7 @@ class TestReadMethods(unittest.TestCase):
 
         # Tests
         assert ymlR.events.count() == 3
-        a = ymlR.events.filter_by(subfolder='run_2015_to_2017').one()
+        ymlR.events.filter_by(subfolder='run_2015_to_2017').one()
 
         # cleanup
         for subdir in dir_list:
@@ -404,9 +403,9 @@ class TestReadMethods(unittest.TestCase):
                   session=self.readSession,)
 
         # Query from database
-        idxQ = self.querySession.query(IndexMap).one()
+        idxQ = self.querySession.query(IndexMap).one()  # noqa: F841
 
-        # Tests
+        # TODO: Tests
 
     def test_project_file_read_all(self):
         """
@@ -421,9 +420,9 @@ class TestReadMethods(unittest.TestCase):
                          session=self.readSession)
 
         # Query Project File
-        prjQ = self.querySession.query(ProjectFile).one()
+        prjQ = self.querySession.query(ProjectFile).one()  # noqa: F841
 
-        # Tests
+        # TODO: Tests
 
     def test_project_file_read_input(self):
         """
@@ -438,9 +437,9 @@ class TestReadMethods(unittest.TestCase):
                        session=self.readSession)
 
         # Query Project File
-        prjQ = self.querySession.query(ProjectFile).one()
+        prjQ = self.querySession.query(ProjectFile).one()  # noqa: F841
 
-        # Tests
+        # TODO: Tests
 
     def test_project_file_read_output(self):
         """
@@ -455,9 +454,9 @@ class TestReadMethods(unittest.TestCase):
                         session=self.readSession)
 
         # Query Project File
-        prjQ = self.querySession.query(ProjectFile).one()
+        prjQ = self.querySession.query(ProjectFile).one()  # noqa: F841
 
-        # Tests
+        # TODO: Tests
 
     def _read_n_query(self, fileIO, directory, filename):
         """
@@ -483,6 +482,7 @@ class TestReadMethods(unittest.TestCase):
     def tearDown(self):
         self.readSession.close()
         self.querySession.close()
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestReadMethods)
 

@@ -32,9 +32,13 @@ from sqlalchemy.types import Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
-from .file_io import *
+from .file_io import MapTableFile, ProjectFileEventManager, PrecipFile, ChannelInputFile, StormPipeNetworkFile, \
+    HmetFile, NwsrfsFile, OrographicGageFile, GridPipeFile, GridStreamFile, TimeSeriesFile, OutputLocationFile, \
+    RasterMapFile, WatershedMaskFile, ProjectionFile, ReplaceParamFile, ReplaceValFile, LinkNodeDatasetFile, \
+    GenericFile, WMSDatasetFile
+
 from ..lib.check_geometry import check_watershed_boundary_geometry
 from ..util.context import tmp_chdir
 from ..util.optional import import_optional
@@ -56,7 +60,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
     supporting object: :class:`.ProjectCard`.
 
     See: http://www.gsshawiki.com/Project_File:Project_File
-    """
+    """  # noqa:E501
     __tablename__ = 'prj_project_files'
 
     tableName = __tablename__  #: Database tablename
@@ -131,7 +135,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                    'IN_SED_LOC': OutputLocationFile,
                    'IN_GWFLUX_LOCATION': OutputLocationFile,
                    'HMET_SURFAWAYS': GenericFile,  # Continuous Simulation
-                   'HMET_SAMSON': GenericFile,  ## TODO: Create support in HmetFile for these formats
+                   'HMET_SAMSON': GenericFile,  # TODO: Create support in HmetFile for these formats
                    'HMET_WES': HmetFile,
                    'NWSRFS_ELEV_SNOW': NwsrfsFile,
                    'HMET_OROG_GAGES': OrographicGageFile,
@@ -240,7 +244,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         self.project_directory = project_directory
 
         # object Properties
-        self._tz = None # grid timezone
+        self._tz = None  # grid timezone
 
     def _read(self, directory, filename, session, path, name, extension,
               spatial, spatialReferenceID, replaceParamFile,
@@ -274,7 +278,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                     try:
                         card = self._extractCard(line, force_relative)
 
-                    except:
+                    except Exception:
                         card = self._extractDirectoryCard(line, force_relative)
 
                     # Now that the cardName and cardValue are separated
@@ -343,7 +347,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 try:
                     card = self._extractCard(line)
 
-                except:
+                except Exception:
                     card = self._extractDirectoryCard(line)
 
                 # Determine number of spaces between card and value for nice alignment
@@ -387,7 +391,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             spatialReferenceID (int, optional): Integer id of spatial reference system for the model. If no id is
                 provided GsshaPy will attempt to automatically lookup the spatial reference ID. If this process fails,
                 default srid will be used (4326 for WGS 84).
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Add project file to session
@@ -407,16 +411,20 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             replaceParamFile = self._readReplacementFiles(directory, session, spatial, spatialReferenceID)
 
             # Read Input Files
-            self._readXput(self.INPUT_FILES, directory, session, spatial=spatial, spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
+            self._readXput(self.INPUT_FILES, directory, session, spatial=spatial,
+                           spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
 
             # Read Output Files
-            self._readXput(self.OUTPUT_FILES, batchDirectory, session, spatial=spatial, spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
+            self._readXput(self.OUTPUT_FILES, batchDirectory, session, spatial=spatial,
+                           spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
 
             # Read Input Map Files
-            self._readXputMaps(self.INPUT_MAPS, directory, session, spatial=spatial, spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
+            self._readXputMaps(self.INPUT_MAPS, directory, session, spatial=spatial,
+                               spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
 
             # Read WMS Dataset Files
-            self._readWMSDatasets(self.WMS_DATASETS, batchDirectory, session, spatial=spatial, spatialReferenceID=spatialReferenceID)
+            self._readWMSDatasets(self.WMS_DATASETS, batchDirectory, session, spatial=spatial,
+                                  spatialReferenceID=spatialReferenceID)
 
             # Commit to database
             self._commit(session, self.COMMIT_ERROR_MESSAGE)
@@ -437,7 +445,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             spatialReferenceID (int, optional): Integer id of spatial reference system for the model. If no id is
                 provided GsshaPy will attempt to automatically lookup the spatial reference ID. If this process fails,
                 default srid will be used (4326 for WGS 84).
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Add project file to session
@@ -454,10 +462,12 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             replaceParamFile = self._readReplacementFiles(directory, session, spatial, spatialReferenceID)
 
             # Read Input Files
-            self._readXput(self.INPUT_FILES, directory, session, spatial=spatial, spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
+            self._readXput(self.INPUT_FILES, directory, session, spatial=spatial,
+                           spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
 
             # Read Input Map Files
-            self._readXputMaps(self.INPUT_MAPS, directory, session, spatial=spatial, spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
+            self._readXputMaps(self.INPUT_MAPS, directory, session, spatial=spatial,
+                               spatialReferenceID=spatialReferenceID, replaceParamFile=replaceParamFile)
 
             # Commit to database
             self._commit(session, self.COMMIT_ERROR_MESSAGE)
@@ -478,7 +488,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             spatialReferenceID (int, optional): Integer id of spatial reference system for the model. If no id is
                 provided GsshaPy will attempt to automatically lookup the spatial reference ID. If this process fails,
                 default srid will be used (4326 for WGS 84).
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Add project file to session
@@ -501,10 +511,12 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 spatialReferenceID = self._automaticallyDeriveSpatialReferenceId(directory)
 
             # Read Output Files
-            self._readXput(self.OUTPUT_FILES, batchDirectory, session, spatial=spatial, spatialReferenceID=spatialReferenceID)
+            self._readXput(self.OUTPUT_FILES, batchDirectory, session, spatial=spatial,
+                           spatialReferenceID=spatialReferenceID)
 
             # Read WMS Dataset Files
-            self._readWMSDatasets(self.WMS_DATASETS, batchDirectory, session, spatial=spatial, spatialReferenceID=spatialReferenceID)
+            self._readWMSDatasets(self.WMS_DATASETS, batchDirectory, session, spatial=spatial,
+                                  spatialReferenceID=spatialReferenceID)
 
             # Commit to database
             self._commit(session, self.COMMIT_ERROR_MESSAGE)
@@ -552,7 +564,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             file object
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Read in replace param file
@@ -561,8 +573,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                                       session, spatial, spatialReferenceID,
                                       replaceParamFile, **kwargs)
 
-    def readOutputFile(self, card_name, directory, session, spatial=False,
-                      spatialReferenceID=None, **kwargs):
+    def readOutputFile(self, card_name, directory, session, spatial=False, spatialReferenceID=None, **kwargs):
         """
         Read specific input file for a GSSHA project to the database.
 
@@ -579,7 +590,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             file object
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             return self._readXputFile(self.OUTPUT_FILES, card_name, directory,
@@ -599,7 +610,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 naming convention will be given this name with the appropriate extension (e.g.: 'example.prj',
                 'example.cmt', and 'example.gag'). Files that do not follow this convention will retain their original
                 file names.
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Get the batch directory for output
@@ -615,16 +626,19 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             self.write(session=session, directory=directory, name=name)
 
             # Write input files
-            self._writeXput(session=session, directory=directory, fileCards=self.INPUT_FILES, name=name, replaceParamFile=replaceParamFile)
+            self._writeXput(session=session, directory=directory, fileCards=self.INPUT_FILES, name=name,
+                            replaceParamFile=replaceParamFile)
 
             # Write output files
             self._writeXput(session=session, directory=batchDirectory, fileCards=self.OUTPUT_FILES, name=name)
 
             # Write input map files
-            self._writeXputMaps(session=session, directory=directory, mapCards=self.INPUT_MAPS, name=name, replaceParamFile=replaceParamFile)
+            self._writeXputMaps(session=session, directory=directory, mapCards=self.INPUT_MAPS, name=name,
+                                replaceParamFile=replaceParamFile)
 
             # Write WMS Dataset Files
-            self._writeWMSDatasets(session=session, directory=batchDirectory, wmsDatasetCards=self.WMS_DATASETS, name=name)
+            self._writeWMSDatasets(session=session, directory=batchDirectory, wmsDatasetCards=self.WMS_DATASETS,
+                                   name=name)
 
     def writeInput(self, session, directory, name):
         """
@@ -637,7 +651,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 naming convention will be given this name with the appropriate extension (e.g.: 'example.prj',
                 'example.cmt', and 'example.gag'). Files that do not follow this convention will retain their original
                 file names.
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Get param file for writing
@@ -647,12 +661,12 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             self.write(session=session, directory=directory, name=name)
 
             # Write input files
-            self._writeXput(session=session, directory=directory, fileCards=self.INPUT_FILES, name=name, replaceParamFile=replaceParamFile)
+            self._writeXput(session=session, directory=directory, fileCards=self.INPUT_FILES, name=name,
+                            replaceParamFile=replaceParamFile)
 
             # Write input map files
-            self._writeXputMaps(session=session, directory=directory, mapCards=self.INPUT_MAPS, name=name, replaceParamFile=replaceParamFile)
-
-
+            self._writeXputMaps(session=session, directory=directory, mapCards=self.INPUT_MAPS, name=name,
+                                replaceParamFile=replaceParamFile)
 
     def writeOutput(self, session, directory, name):
         """
@@ -665,7 +679,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 naming convention will be given this name with the appropriate extension (e.g.: 'example.prj',
                 'example.cmt', and 'example.gag'). Files that do not follow this convention will retain their original
                 file names.
-        """
+        """  # noqa:E501
         self.project_directory = directory
         with tmp_chdir(directory):
             # Get the batch directory for output
@@ -681,7 +695,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             self._writeXput(session=session, directory=batchDirectory, fileCards=self.OUTPUT_FILES, name=name)
 
             # Write WMS Dataset Files
-            self._writeWMSDatasets(session=session, directory=batchDirectory, wmsDatasetCards=self.WMS_DATASETS, name=name)
+            self._writeWMSDatasets(session=session, directory=batchDirectory, wmsDatasetCards=self.WMS_DATASETS,
+                                   name=name)
 
     def getFileKeys(self):
         """
@@ -784,7 +799,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             db_session.delete(gssha_card)
             db_session.commit()
 
-    def getModelSummaryAsKml(self, session, path=None, documentName=None, withStreamNetwork=True, withNodes=False, styles={}):
+    def getModelSummaryAsKml(self, session, path=None, documentName=None, withStreamNetwork=True, withNodes=False,
+                             styles={}):
         """
         Retrieve a KML representation of the model. Includes polygonized mask map and vector stream network.
 
@@ -808,16 +824,16 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             str: KML string
-        """
+        """  # noqa:E501
         # Get mask map
         watershedMaskCard = self.getCard('WATERSHED_MASK')
         maskFilename = watershedMaskCard.value
         maskExtension = maskFilename.strip('"').split('.')[1]
 
         maskMap = session.query(RasterMapFile).\
-                          filter(RasterMapFile.projectFile == self).\
-                          filter(RasterMapFile.fileExtension == maskExtension).\
-                          one()
+            filter(RasterMapFile.projectFile == self).\
+            filter(RasterMapFile.fileExtension == maskExtension).\
+            one()
 
         # Get mask map as a KML polygon
         statement = """
@@ -848,7 +864,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         if 'streamLineColor' in styles:
             if len(styles['streamLineColor']) < 4:
                 log.warning('streamLineColor style must be a list or a tuple of '
-                         'four elements representing integer RGBA values.')
+                            'four elements representing integer RGBA values.')
             else:
                 userLineColor = styles['streamLineColor']
                 streamLineColorValue = (userLineColor[3], userLineColor[2], userLineColor[1], userLineColor[0])
@@ -860,7 +876,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             except ValueError:
                 log.warning('streamLineWidth must be a valid '
-                         'number representing the width of the line in pixels.')
+                            'number representing the width of the line in pixels.')
 
         if 'nodeIconHref' in styles:
             nodeIconHrefValue = styles['nodeIconHref']
@@ -872,12 +888,12 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             except ValueError:
                 log.warning('nodeIconScaleValue must be a valid number representing'
-                         ' the width of the line in pixels.')
+                            ' the width of the line in pixels.')
 
         if 'maskLineColor' in styles:
             if len(styles['maskLineColor']) < 4:
                 log.warning('maskLineColor style must be a list or a tuple of four '
-                         'elements representing integer RGBA values.')
+                            'elements representing integer RGBA values.')
             else:
                 userLineColor = styles['maskLineColor']
                 maskLineColorValue = (userLineColor[3], userLineColor[2], userLineColor[1], userLineColor[0])
@@ -885,7 +901,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         if 'maskFillColor' in styles:
             if len(styles['maskFillColor']) < 4:
                 log.warning('maskFillColor style must be a list or a tuple of four '
-                         'elements representing integer RGBA values.')
+                            'elements representing integer RGBA values.')
             else:
                 userLineColor = styles['maskFillColor']
                 maskFillColorValue = (userLineColor[3], userLineColor[2], userLineColor[1], userLineColor[0])
@@ -897,7 +913,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             except ValueError:
                 log.warning('maskLineWidth must be a valid number representing '
-                         'the width of the line in pixels.')
+                            'the width of the line in pixels.')
 
         if not documentName:
             documentName = self.name
@@ -1018,16 +1034,16 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             str: Well Known Text string
-        """
+        """  # noqa:E501
         # Get mask map
         watershedMaskCard = self.getCard('WATERSHED_MASK')
         maskFilename = watershedMaskCard.value
         maskExtension = maskFilename.strip('"').split('.')[1]
 
         maskMap = session.query(RasterMapFile).\
-                          filter(RasterMapFile.projectFile == self).\
-                          filter(RasterMapFile.fileExtension == maskExtension).\
-                          one()
+            filter(RasterMapFile.projectFile == self).\
+            filter(RasterMapFile.fileExtension == maskExtension).\
+            one()
 
         # Get mask map as a KML polygon
         statement = """
@@ -1084,9 +1100,9 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         maskExtension = maskFilename.strip('"').split('.')[1]
 
         maskMap = session.query(RasterMapFile).\
-                          filter(RasterMapFile.projectFile == self).\
-                          filter(RasterMapFile.fileExtension == maskExtension).\
-                          one()
+            filter(RasterMapFile.projectFile == self).\
+            filter(RasterMapFile.fileExtension == maskExtension).\
+            one()
 
         # Get mask map as a KML polygon
         statement = """
@@ -1242,8 +1258,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             row(float): 1-based row index.
             outslope(Optional[float]): River slope at outlet.
         """
-        #OUTROW, OUTCOL, OUTSLOPE
-        gssha_grid = self.getGrid()
+        # OUTROW, OUTCOL, OUTSLOPE
+        gssha_grid = self.getGrid()  # noqa: F841
         # col, row = gssha_grid.lonlat2pixel(longitude, latitude)
         # add 1 to row & col becasue GSSHA is 1-based
         self.setCard(name='OUTROW', value=str(row))
@@ -1280,7 +1296,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         elevation_grid = self.getGrid(use_mask=False)
         elevation_array = elevation_grid.np_array()
         ma_elevation_array = np.ma.array(elevation_array,
-                                         mask=mask_grid.np_array()==0)
+                                         mask=mask_grid.np_array() == 0)
         min_elevation = sys.maxsize
         outlet_pt = None
         for coord in list(polygon.exterior.coords):
@@ -1299,11 +1315,11 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 nrow = None
                 ncol = None
                 nval = None
-                for row_ix in range(max(row-5, 0), min(row+5, mask_grid.y_size)):
-                    for col_ix in range(max(col-5, 0), min(col+5, mask_grid.x_size)):
+                for row_ix in range(max(row-5, 0), min(row + 5, mask_grid.y_size)):
+                    for col_ix in range(max(col-5, 0), min(col + 5, mask_grid.x_size)):
                         val = ma_elevation_array[row_ix, col_ix]
-                        if not val is np.ma.masked:
-                            val_diff = abs(val-actual_value)
+                        if val is not np.ma.masked:
+                            val_diff = abs(val - actual_value)
                             if val_diff < max_diff:
                                 max_diff = val_diff
                                 nval = val
@@ -1345,15 +1361,15 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             mask_array = mask_grid.np_array()
             mask_array[outrow, outcol] = 0
             mask_array = mask_array[min_row:max_row, min_col:max_col]
-            mask_array = (mask_array==0)
+            mask_array = (mask_array == 0)
 
             elevation_array = elevation_grid.np_array()
             original_elevation = elevation_array[outrow, outcol]
             elevation_array = elevation_array[min_row:max_row, min_col:max_col]
 
             slope_calc_array = (elevation_array-original_elevation)/cell_size
-            #NOTE: Ignoring distance to cells at angles. Assuming to small to matter
-            mask_array[slope_calc_array<=0] = True
+            # NOTE: Ignoring distance to cells at angles. Assuming to small to matter
+            mask_array[slope_calc_array <= 0] = True
 
             slope_mask_array = np.ma.array(slope_calc_array, mask=mask_array)
             outslope = slope_mask_array.mean()
@@ -1402,7 +1418,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         (the lookup uses a web service) and the projection file to be present and the appropriate card in the project
         file pointing to the projection file (#PROJECTION_FILE). If the process fails, it defaults to SRID 4326 which is
         the id for WGS 84.
-        """
+        """  # noqa:E501
         # Only do automatic look up if spatial reference is not specified by the user
         DEFAULT_SPATIAL_REFERENCE_ID = 4236
         # Lookup the projection card in the project file
@@ -1419,14 +1435,16 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 self.srid = srid
                 spatialReferenceID = srid
                 log.info("Automatic spatial reference ID lookup succeded. Using id: {0}".format(spatialReferenceID))
-            except:
+            except Exception:
                 # Otherwise, use the default id
                 spatialReferenceID = DEFAULT_SPATIAL_REFERENCE_ID
-                log.warning("Automatic spatial reference ID lookup failed. Using default id: {0}".format(DEFAULT_SPATIAL_REFERENCE_ID))
+                log.warning("Automatic spatial reference ID lookup failed. Using default id: {0}"
+                            .format(DEFAULT_SPATIAL_REFERENCE_ID))
         else:
             # If there is no projection card in the project file, use default
             spatialReferenceID = DEFAULT_SPATIAL_REFERENCE_ID
-            log.warning("Automatic spatial reference ID lookup failed. Using default id: {0}".format(DEFAULT_SPATIAL_REFERENCE_ID))
+            log.warning("Automatic spatial reference ID lookup failed. Using default id: {0}"
+                        .format(DEFAULT_SPATIAL_REFERENCE_ID))
 
         return spatialReferenceID
 
@@ -1434,7 +1452,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         Check the project file for the REPLACE_FOLDER card. If it exists, append it's value to create the batch directory path.
         This is the directory output is written to when run in batch mode.
-        """
+        """  # noqa:E501
         # Set output directory to main directory as default
         batchDirectory = projectRootDirectory
 
@@ -1456,7 +1474,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         GSSHAPY Project Read Files from File Method
         """
-        ## NOTE: This function is dependent on the project file being read first
+        # NOTE: This function is dependent on the project file being read first
         # Read Input/Output Files
         for card in self.projectCards:
             if (card.name in fileCards) and self._noneOrNumValue(card.value) and fileCards[card.name]:
@@ -1472,7 +1490,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                                  spatialReferenceID=spatialReferenceID,
                                  replaceParamFile=replaceParamFile)
 
-    def _readXputMaps(self, mapCards, directory, session, spatial=False, spatialReferenceID=4236, replaceParamFile=None):
+    def _readXputMaps(self, mapCards, directory, session, spatial=False, spatialReferenceID=4236,
+                      replaceParamFile=None):
         """
         GSSHA Project Read Map Files from File Method
         """
@@ -1482,13 +1501,15 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                     filename = card.value.strip('"')
 
                     # Invoke read method on each map
-                    self._invokeRead(fileIO=WatershedMaskFile if card.name.lower() == 'watershed_mask' else RasterMapFile,
-                                     directory=directory,
-                                     filename=filename,
-                                     session=session,
-                                     spatial=spatial,
-                                     spatialReferenceID=spatialReferenceID,
-                                     replaceParamFile=replaceParamFile)
+                    self._invokeRead(
+                        fileIO=WatershedMaskFile if card.name.lower() == 'watershed_mask' else RasterMapFile,
+                        directory=directory,
+                        filename=filename,
+                        session=session,
+                        spatial=spatial,
+                        spatialReferenceID=spatialReferenceID,
+                        replaceParamFile=replaceParamFile
+                    )
         else:
             for card in self.projectCards:
                 if (card.name in mapCards) and self._noneOrNumValue(card.value):
@@ -1496,16 +1517,18 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                     fileExtension = filename.split('.')[1]
                     if fileExtension in self.ALWAYS_READ_AND_WRITE_MAPS:
                         # Invoke read method on each map
-                        self._invokeRead(fileIO=WatershedMaskFile if card.name.lower() == 'watershed_mask' else RasterMapFile,
-                                         directory=directory,
-                                         filename=filename,
-                                         session=session,
-                                         spatial=spatial,
-                                         spatialReferenceID=spatialReferenceID,
-                                         replaceParamFile=replaceParamFile)
+                        self._invokeRead(
+                            fileIO=WatershedMaskFile if card.name.lower() == 'watershed_mask' else RasterMapFile,
+                            directory=directory,
+                            filename=filename,
+                            session=session,
+                            spatial=spatial,
+                            spatialReferenceID=spatialReferenceID,
+                            replaceParamFile=replaceParamFile
+                        )
 
             log.warning('Could not read map files. '
-                     'MAP_TYPE {0} not supported.'.format(self.mapType))
+                        'MAP_TYPE {0} not supported.'.format(self.mapType))
 
     def _readWMSDatasets(self, datasetCards, directory, session, spatial=False, spatialReferenceID=4236):
         """
@@ -1605,8 +1628,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             instance.projectFile = self
 
             if isinstance(instance, WMSDatasetFile):
-                instance.read(directory=directory, filename=batchFile, session=session, maskMap=maskMap, spatial=spatial,
-                              spatialReferenceID=spatialReferenceID)
+                instance.read(directory=directory, filename=batchFile, session=session, maskMap=maskMap,
+                              spatial=spatial, spatialReferenceID=spatialReferenceID)
             else:
                 instance.read(directory, batchFile, session, spatial=spatial, spatialReferenceID=spatialReferenceID,
                               replaceParamFile=replaceParamFile)
@@ -1621,14 +1644,14 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         elif numFilesRead == 0:
             log.warning('{0} listed in project file, but no such '
-                     'file exists.'.format(filename))
+                        'file exists.'.format(filename))
 
         else:
             log.info('Batch mode output detected. {0} files read '
                      'for file {1}'.format(numFilesRead, filename))
 
-    def _invokeRead(self, fileIO, directory, filename, session, spatial=False,
-                    spatialReferenceID=4236, replaceParamFile=None, **kwargs):
+    def _invokeRead(self, fileIO, directory, filename, session, spatial=False, spatialReferenceID=4236,
+                    replaceParamFile=None, **kwargs):
         """
         Invoke File Read Method on Other Files
         """
@@ -1645,9 +1668,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             self._readBatchOutputForFile(directory, fileIO, filename, session,
                                          spatial, spatialReferenceID, replaceParamFile)
 
-
-    def _writeXput(self, session, directory, fileCards,
-                   name=None, replaceParamFile=None):
+    def _writeXput(self, session, directory, fileCards, name=None, replaceParamFile=None):
         """
         GSSHA Project Write Files to File Method
         """
@@ -1675,8 +1696,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                                   filename=filename,
                                   replaceParamFile=replaceParamFile)
 
-    def _writeXputMaps(self, session, directory, mapCards,
-                       name=None, replaceParamFile=None):
+    def _writeXputMaps(self, session, directory, mapCards, name=None, replaceParamFile=None):
         """
         GSSHAPY Project Write Map Files to File Method
         """
@@ -1750,7 +1770,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                         # Handle case when there is no file in database but
                         # the card is listed in the project file
                         log.warning('{0} listed as card in project file, '
-                                 'but the file is not found in the database.'.format(filename))
+                                    'but the file is not found in the database.'.format(filename))
 
                     except MultipleResultsFound:
                         # Write all instances
@@ -1820,7 +1840,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 filter(fileIO.projectFile == self). \
                 one()
 
-        except:
+        except Exception:
             # Handle case where fileIO interfaces with multiple files
             # Retrieve File using FileIO and file extension
             extension = filename.split('.')[1]
@@ -1836,7 +1856,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # Handle case when there is no file in database but the
                 # card is listed in the project file
                 log.warning('{0} listed as card in project file, but '
-                         'the file is not found in the database.'.format(filename))
+                            'the file is not found in the database.'.format(filename))
             except MultipleResultsFound:
                 self._invokeWriteForMultipleOfType(directory, extension, fileIO,
                                                    filename, session,
@@ -1897,7 +1917,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 float(value)
                 # If the value is a number, return false
                 return False
-            except:
+            except Exception:
                 # If the value is not a number or none return true
                 return True
         # If the value is a None type, then return false
@@ -1922,7 +1942,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 # Store all values if there are multiple.
                 float(pathSplit[-1])
                 cardValue = ' '.join(splitLine[1:])
-            except:
+            except Exception:
                 # A string will throw an exception with an attempt to
                 # convert to float. In this case wrap the string
                 # in double quotes.
@@ -1933,7 +1953,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                         try:
                             # Get WMS ID for Index Map as part of value
                             cardValue = '"%s" "%s"' % (pathSplit[-1], splitLine[2])
-                        except:
+                        except Exception:
                             # Like normal if the ID isn't there
                             cardValue = '"%s"' % pathSplit[-1]
                     else:
@@ -1952,7 +1972,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                     cardValue = pathSplit[-1]
 
         # For boolean cards store None
-        except:
+        except Exception:
             cardValue = None
 
         return {'name': cardName, 'value': cardValue}

@@ -50,10 +50,12 @@ def pivot(table, left, top, value):
     ysort = []
     xsort = []
     for row in table:
-        yaxis = tuple([row[c] for c in left])       # e.g. yaxis = ('Simon',)
-        if yaxis not in ysort: ysort.append(yaxis)
-        xaxis = tuple([row[c] for c in top])        # e.g. xaxis = ('2004',)
-        if xaxis not in xsort: xsort.append(xaxis)
+        yaxis = tuple([row[c] for c in left])  # e.g. yaxis = ('Simon',)
+        if yaxis not in ysort:
+            ysort.append(yaxis)
+        xaxis = tuple([row[c] for c in top])  # e.g. xaxis = ('2004',)
+        if xaxis not in xsort:
+            xsort.append(xaxis)
         try:
             rs[yaxis]
         except KeyError:
@@ -88,23 +90,23 @@ def pivot(table, left, top, value):
         sortedkeys = sorted(rs[left].keys())
         sortedvalues = list(map(rs[left].get, sortedkeys))
         row.extend(sortedvalues)
-        t.append(dict(list(zip(headings,row))))
+        t.append(dict(list(zip(headings, row))))
 
     return t
 
 
 if __name__ == "__main__":
     import random
-    #Build a list of dictionaries
-    c = "Employee","Year","Month","Value"
+    # Build a list of dictionaries
+    c = "Employee", "Year", "Month", "Value"
     d = []
-    for y in range(2003,2005):
-        for m in range(1,13):
-            for e in range(1,6):
-                d.append(dict(list(zip(c,(e,y,m,random.randint(10,90))))))
-    #pivot the list contents using the 'Employee' field for the left column,
-    #and the 'Year' field for the top heading and the 'Value' field for each
-    #cell in the new table.
-    t = pivot(d,["Employee"],["Year"],"Value")
+    for y in range(2003, 2005):
+        for m in range(1, 13):
+            for e in range(1, 6):
+                d.append(dict(list(zip(c, (e, y, m, random.randint(10, 90))))))
+    # pivot the list contents using the 'Employee' field for the left column,
+    # and the 'Year' field for the top heading and the 'Value' field for each
+    # cell in the new table.
+    t = pivot(d, ["Employee"], ["Year"], "Value")
     for row in t:
         print(row)

@@ -7,8 +7,6 @@
 * License: BSD 2-Clause
 ********************************************************************************
 """
-
-
 # TODO: Add capability to store RATING_CURVE, RULE_CURVE, and SCHEDULED_RELEASE data
 
 __all__ = ['ChannelInputFile',
@@ -31,7 +29,7 @@ from sqlalchemy.types import Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 import xml.etree.ElementTree as ET
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.geom import GeometricObjectBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import parsetools as pt, cif_chunk as cic
@@ -118,15 +116,13 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             list: A list of :class:`.StreamLink` objects.
-        """
+        """  # noqa: E501
         streamLinks = session.query(StreamLink).\
-                            filter(StreamLink.channelInputFile == self).\
-                            order_by(StreamLink.linkNumber).\
-                            all()
+            filter(StreamLink.channelInputFile == self).\
+            order_by(StreamLink.linkNumber).\
+            all()
 
         return streamLinks
-
-
 
     def getStreamNetworkAsKml(self, session, path=None, documentName='Stream Network', withNodes=False, styles={}):
         """
@@ -148,7 +144,7 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             str: KML string
-        """
+        """  # noqa: E501
         # Retrieve Stream Links
         links = self.getFluvialLinks()
 
@@ -160,7 +156,8 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         if 'lineColor' in styles:
             if len(styles['lineColor']) < 4:
-                log.warning('lineColor style must be a list or a tuple of four elements containing integer RGBA values.')
+                log.warning('lineColor style must be a list or a tuple of four elements containing integer '
+                            'RGBA values.')
             else:
                 userLineColor = styles['lineColor']
                 lineColorValue = (userLineColor[3], userLineColor[2], userLineColor[1], userLineColor[0])
@@ -183,7 +180,6 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             except ValueError:
                 log.warning('nodeIconScaleValue must be a valid number containing the width of the line in pixels.')
-
 
         # Initialize KML Document
         kml = ET.Element('kml', xmlns='http://www.opengis.net/kml/2.2')
@@ -455,19 +451,19 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
         alpha = vwp(self.alpha, replaceParamFile)
         try:
             openFile.write('ALPHA%s%.6f\n' % (' ' * 7, alpha))
-        except:
+        except Exception:
             openFile.write('ALPHA%s%s\n' % (' ' * 7, alpha))
 
         beta = vwp(self.beta, replaceParamFile)
         try:
             openFile.write('BETA%s%.6f\n' % (' ' * 8, beta))
-        except:
+        except Exception:
             openFile.write('BETA%s%s\n' % (' ' * 8, beta))
 
         theta = vwp(self.theta, replaceParamFile)
         try:
             openFile.write('THETA%s%.6f\n' % (' ' * 7, theta))
-        except:
+        except Exception:
             openFile.write('THETA%s%s\n' % (' ' * 7, theta))
 
         openFile.write('LINKS%s%s\n' % (' ' * 7, self.links))
@@ -503,7 +499,6 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         return link
 
-
     def _createConnectivity(self, linkList, connectList):
         """
         Create GSSHAPY Connect Object Method
@@ -521,7 +516,6 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             link.downstreamLinkID = int(connectivity['downLink'])
             link.numUpstreamLinks = int(connectivity['numUpLinks'])
-
 
     def _createCrossSection(self, linkResult, replaceParamFile):
         """
@@ -812,17 +806,17 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
             # Lake handler
             try:
                 fileObject.write('INITWSE      %.6f\n' % initWSE)
-            except:
+            except Exception:
                 fileObject.write('INITWSE      %s\n' % initWSE)
 
             try:
                 fileObject.write('MINWSE       %.6f\n' % minWSE)
-            except:
+            except Exception:
                 fileObject.write('MINWSE       %s\n' % minWSE)
 
             try:
                 fileObject.write('MAXWSE       %.6f\n' % maxWSE)
-            except:
+            except Exception:
                 fileObject.write('MAXWSE       %s\n' % maxWSE)
 
             fileObject.write('NUMPTS       %s\n' % numElements)
@@ -831,17 +825,17 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
             # Reservoir handler
             try:
                 fileObject.write('RES_INITWSE      %.6f\n' % initWSE)
-            except:
+            except Exception:
                 fileObject.write('RES_INITWSE      %s\n' % initWSE)
 
             try:
                 fileObject.write('RES_MINWSE       %.6f\n' % minWSE)
-            except:
+            except Exception:
                 fileObject.write('RES_MINWSE       %s\n' % minWSE)
 
             try:
                 fileObject.write('RES_MAXWSE       %.6f\n' % maxWSE)
-            except:
+            except Exception:
                 fileObject.write('RES_MAXWSE       %s\n' % maxWSE)
 
             fileObject.write('RES_NUMPTS       %s\n' % numElements)
@@ -857,7 +851,6 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         if (link.numElements % 10) != 0:
             fileObject.write('\n')
-
 
     def _writeStructureLink(self, link, fileObject, replaceParamFile):
         """
@@ -883,43 +876,43 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
             steepSlope = vwp(weir.steepSlope, replaceParamFile)
             shallowSlope = vwp(weir.shallowSlope, replaceParamFile)
 
-            if weir.crestLength != None:
+            if weir.crestLength is not None:
                 try:
                     fileObject.write('CREST_LENGTH             %.6f\n' % crestLength)
-                except:
+                except Exception:
                     fileObject.write('CREST_LENGTH             %s\n' % crestLength)
 
-            if weir.crestLowElevation != None:
+            if weir.crestLowElevation is not None:
                 try:
                     fileObject.write('CREST_LOW_ELEV           %.6f\n' % crestLowElevation)
-                except:
+                except Exception:
                     fileObject.write('CREST_LOW_ELEV           %s\n' % crestLowElevation)
 
-            if weir.dischargeCoeffForward != None:
+            if weir.dischargeCoeffForward is not None:
                 try:
                     fileObject.write('DISCHARGE_COEFF_FORWARD  %.6f\n' % dischargeCoeffForward)
-                except:
+                except Exception:
                     fileObject.write('DISCHARGE_COEFF_FORWARD  %s\n' % dischargeCoeffForward)
 
-            if weir.dischargeCoeffReverse != None:
+            if weir.dischargeCoeffReverse is not None:
                 try:
                     fileObject.write('DISCHARGE_COEFF_REVERSE  %.6f\n' % dischargeCoeffReverse)
-                except:
+                except Exception:
                     fileObject.write('DISCHARGE_COEFF_REVERSE  %s\n' % dischargeCoeffReverse)
 
-            if weir.crestLowLocation != None:
-                    fileObject.write('CREST_LOW_LOC            %s\n' % crestLowLocation)
+            if weir.crestLowLocation is not None:
+                fileObject.write('CREST_LOW_LOC            %s\n' % crestLowLocation)
 
-            if weir.steepSlope != None:
+            if weir.steepSlope is not None:
                 try:
                     fileObject.write('STEEP_SLOPE              %.6f\n' % steepSlope)
-                except:
+                except Exception:
                     fileObject.write('STEEP_SLOPE              %s\n' % steepSlope)
 
-            if weir.shallowSlope != None:
+            if weir.shallowSlope is not None:
                 try:
                     fileObject.write('SHALLOW_SLOPE            %.6f\n' % shallowSlope)
-                except:
+                except Exception:
                     fileObject.write('SHALLOW_SLOPE            %s\n' % shallowSlope)
 
         # Write culverts to file
@@ -938,65 +931,64 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
             width = vwp(culvert.width, replaceParamFile)
             height = vwp(culvert.height, replaceParamFile)
 
-            if culvert.upstreamInvert != None:
+            if culvert.upstreamInvert is not None:
                 try:
                     fileObject.write('UPINVERT                 %.6f\n' % upstreamInvert)
-                except:
+                except Exception:
                     fileObject.write('UPINVERT                 %s\n' % upstreamInvert)
 
-            if culvert.downstreamInvert != None:
+            if culvert.downstreamInvert is not None:
                 try:
                     fileObject.write('DOWNINVERT               %.6f\n' % downstreamInvert)
-                except:
+                except Exception:
                     fileObject.write('DOWNINVERT               %s\n' % downstreamInvert)
 
-            if culvert.inletDischargeCoeff != None:
+            if culvert.inletDischargeCoeff is not None:
                 try:
                     fileObject.write('INLET_DISCH_COEFF        %.6f\n' % inletDischargeCoeff)
-                except:
+                except Exception:
                     fileObject.write('INLET_DISCH_COEFF        %s\n' % inletDischargeCoeff)
 
-            if culvert.reverseFlowDischargeCoeff != None:
+            if culvert.reverseFlowDischargeCoeff is not None:
                 try:
                     fileObject.write('REV_FLOW_DISCH_COEFF     %.6f\n' % reverseFlowDischargeCoeff)
-                except:
+                except Exception:
                     fileObject.write('REV_FLOW_DISCH_COEFF     %s\n' % reverseFlowDischargeCoeff)
 
-            if culvert.slope != None:
+            if culvert.slope is not None:
                 try:
                     fileObject.write('SLOPE                    %.6f\n' % slope)
-                except:
+                except Exception:
                     fileObject.write('SLOPE                    %s\n' % slope)
 
-            if culvert.length != None:
+            if culvert.length is not None:
                 try:
                     fileObject.write('LENGTH                   %.6f\n' % length)
-                except:
+                except Exception:
                     fileObject.write('LENGTH                   %s\n' % length)
 
-            if culvert.roughness != None:
+            if culvert.roughness is not None:
                 try:
                     fileObject.write('ROUGH_COEFF              %.6f\n' % roughness)
-                except:
+                except Exception:
                     fileObject.write('ROUGH_COEFF              %s\n' % roughness)
 
-            if culvert.diameter != None:
+            if culvert.diameter is not None:
                 try:
                     fileObject.write('DIAMETER                 %.6f\n' % diameter)
-                except:
+                except Exception:
                     fileObject.write('DIAMETER                 %s\n' % diameter)
 
-
-            if culvert.width != None:
+            if culvert.width is not None:
                 try:
                     fileObject.write('WIDTH                    %.6f\n' % width)
-                except:
+                except Exception:
                     fileObject.write('WIDTH                    %s\n' % width)
 
-            if culvert.height != None:
+            if culvert.height is not None:
                 try:
                     fileObject.write('HEIGHT                   %.6f\n' % height)
-                except:
+                except Exception:
                     fileObject.write('HEIGHT                   %s\n' % height)
 
     def _writeCrossSectionLink(self, link, fileObject, replaceParamFile):
@@ -1009,7 +1001,7 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
         dx = vwp(link.dx, replaceParamFile)
         try:
             fileObject.write('DX             %.6f\n' % dx)
-        except:
+        except Exception:
             fileObject.write('DX             %s\n' % dx)
 
         fileObject.write('%s\n' % linkType)
@@ -1038,22 +1030,22 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
 
                     try:
                         fileObject.write('MANNINGS_N     %.6f\n' % mannings_n)
-                    except:
+                    except Exception:
                         fileObject.write('MANNINGS_N     %s\n' % mannings_n)
 
                     try:
                         fileObject.write('BOTTOM_WIDTH   %.6f\n' % bottomWidth)
-                    except:
+                    except Exception:
                         fileObject.write('BOTTOM_WIDTH   %s\n' % bottomWidth)
 
                     try:
                         fileObject.write('BANKFULL_DEPTH %.6f\n' % bankfullDepth)
-                    except:
+                    except Exception:
                         fileObject.write('BANKFULL_DEPTH %s\n' % bankfullDepth)
 
                     try:
                         fileObject.write('SIDE_SLOPE     %.6f\n' % sideSlope)
-                    except:
+                    except Exception:
                         fileObject.write('SIDE_SLOPE     %s\n' % sideSlope)
 
                     # Write optional cross section properties
@@ -1067,12 +1059,11 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
                     mannings_n = vwp(xSec.mannings_n, replaceParamFile)
                     try:
                         fileObject.write('MANNINGS_N     %.6f\n' % mannings_n)
-                    except:
+                    except Exception:
                         fileObject.write('MANNINGS_N     %s\n' % mannings_n)
 
                     fileObject.write('NPAIRS         %s\n' % xSec.numPairs)
                     fileObject.write('NUM_INTERP     %s\n' % vwp(xSec.numInterp, replaceParamFile))
-
 
                     # Write optional cross section properties
                     self._writeOptionalXsecCards(fileObject=fileObject, xSec=xSec, replaceParamFile=replaceParamFile)
@@ -1090,24 +1081,24 @@ class ChannelInputFile(DeclarativeBase, GsshaPyFileObjectBase):
         if xSec.erode:
             fileObject.write('ERODE\n')
 
-        if xSec.maxErosion != None:
+        if xSec.maxErosion is not None:
             fileObject.write('MAX_EROSION    %.6f\n' % xSec.maxErosion)
 
         if xSec.subsurface:
             fileObject.write('SUBSURFACE\n')
 
-        if xSec.mRiver != None:
+        if xSec.mRiver is not None:
             mRiver = vwp(xSec.mRiver, replaceParamFile)
             try:
                 fileObject.write('M_RIVER        %.6f\n' % mRiver)
-            except:
+            except Exception:
                 fileObject.write('M_RIVER        %s\n' % mRiver)
 
-        if xSec.kRiver != None:
+        if xSec.kRiver is not None:
             kRiver = vwp(xSec.kRiver, replaceParamFile)
             try:
                 fileObject.write('K_RIVER        %.6f\n' % kRiver)
-            except:
+            except Exception:
                 fileObject.write('K_RIVER        %s\n' % kRiver)
 
     def _getUpdateGeometrySqlString(self, geometryID, tableName, spatialReferenceID, wktString):
@@ -1179,17 +1170,10 @@ class StreamLink(DeclarativeBase, GeometricObjectBase):
         self.erode = erode
         self.subsurface = subsurface
 
-
     def __repr__(self):
-        return '<StreamLink: LinkNumber=%s, Type=%s, NumberElements=%s, DX=%s, Erode=%s, Subsurface=%s, DownstreamLinkID=%s, NumUpstreamLinks=%s>' % (
-            self.linkNumber,
-            self.type,
-            self.numElements,
-            self.dx,
-            self.erode,
-            self.subsurface,
-            self.downstreamLinkID,
-            self.numUpstreamLinks)
+        return f'<StreamLink: LinkNumber={self.linkNumber}, Type={self.type}, NumberElements={self.numElements}, ' \
+               f'DX={self.dx}, Erode={self.erode}, Subsurface={self.subsurface}, ' \
+               f'DownstreamLinkID={self.downstreamLinkID}, NumUpstreamLinks={self.numUpstreamLinks}>'
 
     def __eq__(self, other):
         return (self.linkNumber == other.linkNumber and
@@ -1226,7 +1210,7 @@ class UpstreamLink(DeclarativeBase):
         self.upstreamLinkID = upstreamLinkID
 
     def __repr__(self):
-        return '<UpstreamLink: LinkID=%s, UpstreamLinkID=%s>' % (self.linkID, self.upstreamLinkID)
+        return f'<UpstreamLink: LinkID={self.linkID}, UpstreamLinkID={self.upstreamLinkID}>'
 
     def __eq__(self, other):
         return self.upstreamLinkID == other.upstreamLinkID
@@ -1267,7 +1251,6 @@ class StreamNode(DeclarativeBase, GeometricObjectBase):
     streamLink = relationship('StreamLink', back_populates='nodes')  #: RELATIONSHIP
     datasets = relationship('NodeDataset', back_populates='node')  #: RELATIONSHIP
 
-
     def __init__(self, nodeNumber, x, y, elevation):
         """
         Constructor
@@ -1277,13 +1260,8 @@ class StreamNode(DeclarativeBase, GeometricObjectBase):
         self.y = y
         self.elevation = elevation
 
-
     def __repr__(self):
-        return '<Node: NodeNumber=%s, X=%s, Y=%s, Elevation=%s>' % (
-            self.nodeNumber,
-            self.x,
-            self.y,
-            self.elevation)
+        return f'<Node: NodeNumber={self.nodeNumber}, X={self.x}, Y={self.t}, Elevation={self.elevation}>'
 
     def __eq__(self, other):
         return (self.nodeNumber == other.nodeNumber and
@@ -1319,7 +1297,6 @@ class Weir(DeclarativeBase):
     # Relationship Properties
     streamLink = relationship('StreamLink', back_populates='weirs')  #: RELATIONSHIP
 
-
     def __init__(self, type, crestLength, crestLowElevation, dischargeCoeffForward, dischargeCoeffReverse,
                  crestLowLocation, steepSlope, shallowSlope):
         """
@@ -1334,17 +1311,11 @@ class Weir(DeclarativeBase):
         self.steepSlope = steepSlope
         self.shallowSlope = shallowSlope
 
-
     def __repr__(self):
-        return '<Weir: Type=%s, CrestLenght=%s, CrestLowElevation=%s, DischargeCoeffForward=%s, DischargeCoeffReverse=%s, CrestLowLocation=%s, SteepSlope=%s, ShallowSlope=%s>' % (
-            self.type,
-            self.crestLength,
-            self.crestLowElevation,
-            self.dischargeCoeffForward,
-            self.dischargeCoeffReverse,
-            self.crestLowLocation,
-            self.steepSlope,
-            self.shallowSlope)
+        return f'<Weir: Type={self.type}, CrestLenght={self.crestLength}, ' \
+               f'CrestLowElevation={self.crestLowElevation}, DischargeCoeffForward={self.dischargeCoeffForward}, ' \
+               f'DischargeCoeffReverse={self.dischargeCoeffReverse}, CrestLowLocation={self.crestLowElevation}, ' \
+               f'SteepSlope={self.steepSlope}, ShallowSlope={self.shallowSlope}>'
 
     def __eq__(self, other):
         return (self.type == other.type and
@@ -1405,18 +1376,11 @@ class Culvert(DeclarativeBase):
         self.height = height
 
     def __repr__(self):
-        return '<Culvert: Type=%s, UpstreamInvert=%s, DownstreamInvert=%s, InletDischargeCoeff=%s, ReverseFlowDischargeCoeff=%s, Slope=%s, Length=%s, Roughness=%s, Diameter=%s, Width=%s, Height=%s>' % (
-            self.type,
-            self.upstreamInvert,
-            self.downstreamInvert,
-            self.inletDischargeCoeff,
-            self.reverseFlowDischargeCoeff,
-            self.slope,
-            self.length,
-            self.roughness,
-            self.diameter,
-            self.width,
-            self.height)
+        return f'<Culvert: Type={self.type}, UpstreamInvert={self.upstreamInvert}, ' \
+               f'DownstreamInvert={self.downstreamInvert}, InletDischargeCoeff={self.inletDischargeCoeff}, ' \
+               f'ReverseFlowDischargeCoeff={self.reverseFlowDischargeCoeff}, Slope={self.slope}, ' \
+               f'Length={self.length}, Roughness={self.roughness}, Diameter={self.diameter}, Width={self.width}, ' \
+               f'Height={self.height}>'
 
     def __eq__(self, other):
         return (self.type == other.type and
@@ -1464,7 +1428,7 @@ class Reservoir(DeclarativeBase):
         self.maxWSE = maxWSE
 
     def __repr__(self):
-        return '<Reservoir: InitialWSE=%s, MinWSE=%s, MaxWSE=%s>' % (self.initWSE, self.minWSE, self.maxWSE)
+        return f'<Reservoir: InitialWSE={self.initWSE}, MinWSE={self.minWSE}, MaxWSE={self.maxWSE}>'
 
     def __eq__(self, other):
         return (self.initWSE == other.initWSE and
@@ -1501,7 +1465,7 @@ class ReservoirPoint(DeclarativeBase):
         self.j = j
 
     def __repr__(self):
-        return '<ReservoirPoint: CellI=%s, CellJ=%s>' % (self.i, self.j)
+        return f'<ReservoirPoint: CellI={self.i}, CellJ={self.j}>'
 
     def __eq__(self, other):
         return (self.i == other.i and
@@ -1525,7 +1489,7 @@ class BreakpointCS(DeclarativeBase):
     # Value Columns
     mannings_n = Column(Float)  #: FLOAT
     numPairs = Column(Integer)  #: INTEGER
-    numInterp = Column(Integer)  #:INTEGER
+    numInterp = Column(Integer)  #: INTEGER
     mRiver = Column(Float)  #: FLOAT
     kRiver = Column(Float)  #: FLOAT
     erode = Column(Boolean)  #: BOOLEAN
@@ -1550,15 +1514,9 @@ class BreakpointCS(DeclarativeBase):
         self.maxErosion = maxErosion
 
     def __repr__(self):
-        return '<BreakpointCrossSection: Mannings-n=%s, NumPairs=%s, NumInterp=%s, M-River=%s, K-River=%s, Erode=%s, Subsurface=%s, MaxErosion=%s>' % (
-            self.mannings_n,
-            self.numPairs,
-            self.numInterp,
-            self.mRiver,
-            self.kRiver,
-            self.erode,
-            self.subsurface,
-            self.maxErosion)
+        return f'<BreakpointCrossSection: Mannings-n={self.mannings_n}, NumPairs={self.numPairs}, ' \
+               f'NumInterp={self.numInterp}, M-River={self.mRiver}, K-River={self.kRiver}, ' \
+               f'Erode={self.erode}, Subsurface={self.subsurface}, MaxErosion={self.maxErosion}>'
 
     def __eq__(self, other):
         return (self.mannings_n == other.mannings_n and
@@ -1600,7 +1558,7 @@ class Breakpoint(DeclarativeBase):
         self.y = y
 
     def __repr__(self):
-        return '<Breakpoint: X=%s, Y=%s>' % (self.x, self.y)
+        return f'<Breakpoint: X={self.x}, Y={self.y}>'
 
     def __eq__(self, other):
         return (self.x == other.x,
@@ -1651,16 +1609,10 @@ class TrapezoidalCS(DeclarativeBase):
         self.maxErosion = maxErosion
 
     def __repr__(self):
-        return '<TrapezoidalCS: Mannings-n=%s, BottomWidth=%s, BankfullDepth=%s, SideSlope=%s, M-River=%s, K-River=%s, Erode=%s, Subsurface=%s, MaxErosion=%s>' % (
-            self.mannings_n,
-            self.bottomWidth,
-            self.bankfullDepth,
-            self.sideSlope,
-            self.mRiver,
-            self.kRiver,
-            self.erode,
-            self.subsurface,
-            self.maxErosion)
+        return f'<TrapezoidalCS: Mannings-n={self.mannings_n}, BottomWidth={self.bottomWidth}, ' \
+               f'BankfullDepth={self.bankfullDepth}, SideSlope={self.sideSlope}, M-River={self.mRiver}, ' \
+               f'K-River={self.kRiver}, Erode={self.erode}, Subsurface={self.subsurface}, ' \
+               f'MaxErosion={self.maxErosion}>'
 
     def __eq__(self, other):
         return (self.mannings_n == other.mannings_n and

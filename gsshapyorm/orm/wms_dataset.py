@@ -21,7 +21,7 @@ from mapkit.RasterLoader import RasterLoader
 from mapkit.RasterConverter import RasterConverter
 from mapkit.sqlatypes import Raster
 
-from . import DeclarativeBase
+from .declarative_base import DeclarativeBase
 from ..base.file_base import GsshaPyFileObjectBase
 from ..lib import parsetools as pt, wms_dataset_chunk as wdc
 from .map import RasterMapFile
@@ -77,34 +77,37 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
     def __repr__(self):
         if self.type == self.SCALAR_TYPE:
-            return '<WMSDatasetFile: Name=%s, Type=%s, objectType=%s, objectID=%s, numberData=%s, numberCells=%s, FileExtension=%s>' % (
-                self.name,
-                'scalar',
-                self.objectType,
-                self.objectID,
-                self.numberData,
-                self.numberCells,
-                self.fileExtension)
+            return '<WMSDatasetFile: Name=%s, Type=%s, objectType=%s, objectID=%s, numberData=%s, numberCells=%s, ' \
+                   'FileExtension=%s>' % (
+                    self.name,
+                    'scalar',
+                    self.objectType,
+                    self.objectID,
+                    self.numberData,
+                    self.numberCells,
+                    self.fileExtension)
 
         elif self.type == self.VECTOR_TYPE:
-            return '<WMSDatasetFile: Name=%s, Type=%s, vectorType=%s, objectID=%s, numberData=%s, numberCells=%s, FileExtension=%s>' % (
-                self.name,
-                'vector',
-                self.vectorType,
-                self.objectID,
-                self.numberData,
-                self.numberCells,
-                self.fileExtension)
+            return '<WMSDatasetFile: Name=%s, Type=%s, vectorType=%s, objectID=%s, numberData=%s, numberCells=%s, ' \
+                   'FileExtension=%s>' % (
+                    self.name,
+                    'vector',
+                    self.vectorType,
+                    self.objectID,
+                    self.numberData,
+                    self.numberCells,
+                    self.fileExtension)
         else:
-            return '<WMSDatasetFile: Name=%s, Type=%s, objectType=%s, vectorType=%s, objectID=%s, numberData=%s, numberCells=%s, FileExtension=%s>' % (
-                self.name,
-                self.type,
-                self.objectType,
-                self.vectorType,
-                self.objectID,
-                self.numberData,
-                self.numberCells,
-                self.fileExtension)
+            return '<WMSDatasetFile: Name=%s, Type=%s, objectType=%s, vectorType=%s, objectID=%s, numberData=%s, ' \
+                   'numberCells=%s, FileExtension=%s>' % (
+                    self.name,
+                    self.type,
+                    self.objectType,
+                    self.vectorType,
+                    self.objectID,
+                    self.numberData,
+                    self.numberCells,
+                    self.fileExtension)
 
     def read(self, directory, filename, session, maskMap, spatial=False, spatialReferenceID=4236):
         """
@@ -161,7 +164,7 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
         # Run name preprocessor method if present
         try:
             name = self._namePreprocessor(name)
-        except:
+        except Exception:
             'DO NOTHING'
 
         if extension == '':
@@ -177,9 +180,8 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
                         openFile=openFile,
                         maskMap=maskMap)
 
-
-
-    def getAsKmlGridAnimation(self, session, projectFile=None, path=None, documentName=None, colorRamp=None, alpha=1.0, noDataValue=0.0):
+    def getAsKmlGridAnimation(self, session, projectFile=None, path=None, documentName=None, colorRamp=None, alpha=1.0,
+                              noDataValue=0.0):
         """
         Retrieve the WMS dataset as a gridded time stamped KML string.
 
@@ -201,7 +203,7 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             str: KML string
-        """
+        """  # noqa:E501
         # Prepare rasters
         timeStampedRasters = self._assembleRasterParams(projectFile, self.rasters)
 
@@ -232,7 +234,7 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
         return kmlString
 
     def getAsKmlPngAnimation(self, session, projectFile=None, path=None, documentName=None, colorRamp=None, alpha=1.0,
-                              noDataValue=0, drawOrder=0, cellSize=None, resampleMethod='NearestNeighbour'):
+                             noDataValue=0, drawOrder=0, cellSize=None, resampleMethod='NearestNeighbour'):
         """
         Retrieve the WMS dataset as a PNG time stamped KMZ
 
@@ -263,7 +265,7 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         Returns:
             (str, list): Returns a KML string and a list of binary strings that are the PNG images.
-        """
+        """  # noqa:E501
         # Prepare rasters
         timeStampedRasters = self._assembleRasterParams(projectFile, self.rasters)
 
@@ -385,7 +387,7 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         else:
             log.warning("Could not read {0}. Mask Map must be supplied "
-                     "to read WMS Datasets.".format(filename))
+                        "to read WMS Datasets.".format(filename))
 
     def _write(self, session, openFile, maskMap):
         """
@@ -493,7 +495,7 @@ class WMSDatasetRaster(DeclarativeBase, RasterObjectBase):
 
     This object inherits several methods from the :class:`gsshapyorm.orm.RasterObjectBase` base class for generating raster
     visualizations. These methods can be used to generate individual raster visualizations for specific time steps.
-    """
+    """  # noqa:E501
     __tablename__ = 'wms_dataset_rasters'
 
     # Public Table Metadata
@@ -533,7 +535,7 @@ class WMSDatasetRaster(DeclarativeBase, RasterObjectBase):
         FIRST_VALUE_INDEX = 12
 
         # Write value raster
-        if type(self.raster) != type(None):
+        if self.raster is not None:
             # Convert to GRASS ASCII Raster
             valueGrassRasterString = self.getAsGrassAsciiGrid(session)
 
