@@ -53,7 +53,7 @@ class RasterObjectBase:
         Returns:
             str: KML string
         """  # noqa: E501
-        if self.raster is None:
+        if self.raster is not None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -113,7 +113,7 @@ class RasterObjectBase:
         Returns:
             str: KML string
         """  # noqa: E501
-        if self.raster is None:
+        if self.raster is not None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -182,7 +182,7 @@ class RasterObjectBase:
         Returns:
             (str, list): Returns a KML string and a list of binary strings that are the PNG images.
         """  # noqa: E501
-        if self.raster is None:
+        if self.raster is not None:
             # Set Document Name
             if documentName is None:
                 try:
@@ -235,7 +235,7 @@ class RasterObjectBase:
         Returns:
             str: GRASS ASCII string.
         """  # noqa: E501
-        if self.raster is None:
+        if self.raster is not None:
             # Make sure the raster field is valid
             converter = RasterConverter(sqlAlchemyEngineOrSession=session)
 
