@@ -102,7 +102,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                     'EVAPOTRANSPIRATION': mtc.mapTableChunk,
                     'WELL_TABLE': mtc.mapTableChunk,
                     'OVERLAND_BOUNDARY': mtc.mapTableChunk,
-                    'TIME_SERIES_INDEX': mtc.mapTableChunk,
+                    'TIME_SERIES_INDEX': mtc.timeSeriesChunk,
                     'GROUNDWATER': mtc.mapTableChunk,
                     'GROUNDWATER_BOUNDARY': mtc.mapTableChunk,
                     'AREA_REDUCTION': mtc.mapTableChunk,
@@ -198,6 +198,10 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                             mapTable=mapTable,
                                             contaminants=contaminants,
                                             replaceParamFile=replaceParamFile)
+            elif mapTable.name == 'TIME_SERIES_INDEX':
+                self._writeTimeSeriesIndex(session=session,
+                                           fileObject=openFile,
+                                           mapTable=mapTable)
             else:
                 self._writeMapTable(session=session,
                                     fileObject=openFile,
@@ -289,6 +293,14 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
                         # Associate the MTSediment with the MapTable
                         sediment.mapTable = mapTable
+
+                elif mt['name'] == 'TIME_SERIES_INDEX':
+                    for line in mt['valueList']:
+                        ts_index = MTTimeSeriesIndex(
+                            index=line['index'],
+                            timeSeriesName=line['ts_name']
+                        )
+                        ts_index.mapTable = mapTable
 
                 # All other map table handler
                 else:
@@ -473,6 +485,21 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             fileObject.write('%s%s%s%s%s%s%s\n' % (
                 sediment.description, ' ' * space1, specGrav, ' ' * 5, partDiam, ' ' * 6, sediment.outputFilename))
+
+    def _writeTimeSeriesIndex(self, session, fileObject, mapTable):
+        # Write the sediment mapping table header
+        fileObject.write('%s\n' % (mapTable.name))
+        fileObject.write('NUM_IDS %s\n' % (mapTable.numIDs))
+
+        # Write the value header line
+        fileObject.write('ID    Time series name\n')
+
+        # Retrieve the time series mapping table values
+        time_series_indices = mapTable.time_series_indices
+
+        for ts in time_series_indices:
+            spaces = 6 - len(ts.index)
+            fileObject.write(f'{ts.index}{" " * spaces}{ts.time_series_name}\n')
 
     def _valuePivot(self, session, mapTable, contaminant, replaceParaFile):
         """
@@ -777,6 +804,8 @@ class MapTable(DeclarativeBase):
     values = relationship('MTValue', back_populates='mapTable', cascade='all, delete, delete-orphan')  #: RELATIONSHIP
     sediments = relationship('MTSediment', back_populates='mapTable',
                              cascade='all, delete, delete-orphan')  #: RELATIONSHIP
+    time_series_indices = relationship('MTTimeSeriesIndex', back_populates='mapTable',
+                                       cascade='all, delete, delete-orphan')  #: RELATIONSHIP
 
     def __init__(self, name, numIDs=None, maxNumCells=None, numSed=None, numContam=None, maxSoilID=None):
         """
@@ -984,3 +1013,39 @@ class MTSediment(DeclarativeBase):
                 self.specificGravity == other.specificGravity and
                 self.particleDiameter == other.particleDiameter and
                 self.outputFilename == other.outputFilename)
+
+
+class MTTimeSeriesIndex(DeclarativeBase):
+    """
+    Object containing data in time series index type mapping tables.
+
+    See: https://gsshawiki.com/Mapping_Table:Mapping_Tables#12.3.11_Time_Series_Index
+    """
+    __tablename__ = 'cmt_time_series_index'
+
+    tableName = __tablename__  #: Database tablename
+
+    # Primary and Foreign Keys
+    id = Column(Integer, autoincrement=True, primary_key=True)  #: PK
+    mapTableID = Column(Integer, ForeignKey('cmt_map_tables.id'))  #: FK
+
+    # Value Columns
+    index = Column(String)  #: STRING
+    time_series_name = Column(String)  #: STRING
+
+    # Relationship Properties
+    mapTable = relationship('MapTable', back_populates='time_series_indices')  #: RELATIONSHIP
+
+    def __init__(self, index, timeSeriesName):
+        """
+        Constructor
+        """
+        self.index = index
+        self.time_series_name = timeSeriesName
+
+    def __repr__(self):
+        return f'<MTTimeSeriesIndex: Index={self.index} TimeSeriesName={self.time_series_name}>'
+
+    def __eq__(self, other):
+        return (self.index == other.index and
+                self.time_series_name == other.time_series_name)

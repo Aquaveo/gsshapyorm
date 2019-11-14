@@ -219,6 +219,40 @@ def sedimentChunk(key, chunk):
     return result
 
 
+def timeSeriesChunk(key, chunk):
+    # Global variables
+    numVars = {'NUM_IDS': None,
+               'MAX_NUMBER_CELLS': None,
+               'NUM_SED': None,
+               'NUM_CONTAM': None,
+               'MAX_SOIL_ID': None}
+    valueList = []
+
+    for line in chunk:
+        sline = line.strip().split()
+        token = sline[0]
+
+        if token == key:
+            mtName = sline[0]
+        elif token in numVars:
+            # Extract NUM type variables
+            numVars[sline[0]] = sline[1]
+        elif token == 'ID':
+            pass
+        else:
+            valueList.append({'index': sline[0], 'ts_name': sline[1]})
+
+    # Create return/result object
+    result = {'name': mtName,
+              'indexMapName': None,
+              'numVars': numVars,
+              'varList': None,
+              'valueList': valueList,
+              'contaminants': None}
+
+    return result
+
+
 def _buildVarList(sline, mapTableName, numVars):
     # Global constant
     IGNORE = ['ID', 'DESCRIPTION1', 'DESCRIPTION2']
