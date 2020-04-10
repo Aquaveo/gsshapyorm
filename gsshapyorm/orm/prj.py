@@ -652,7 +652,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 'example.cmt', and 'example.gag'). Files that do not follow this convention will retain their original
                 file names.
         """  # noqa:E501
-        debug_log = '/var/lib/condor/debug_preliminary_run/debug_gsshapy.log'
+        debug_log = f'/var/lib/condor/debug_preliminary_run/debug_gsshapy_{id(self)}.log'
         self.project_directory = directory
 
         with open(debug_log, 'a') as debug:
