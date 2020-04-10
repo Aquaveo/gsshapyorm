@@ -304,6 +304,9 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         Project File Write to File Method
         """
+        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(self)}.log'
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5.1 ')
         # Enforce cards that must be written in certain order
         PRIORITY_CARDS = ('WMS', 'MASK_WATERSHED', 'REPLACE_LINE',
                           'REPLACE_PARAMS', 'REPLACE_VALS', 'REPLACE_FOLDER')
@@ -311,8 +314,13 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         filename = os.path.split(openFile.name)[1]
         name = filename.split('.')[0]
 
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5.2 ')
         # Write lines
         openFile.write('GSSHAPROJECT\n')
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5.3 ')
 
         # Write priority lines
         for card_key in PRIORITY_CARDS:
@@ -322,10 +330,16 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             if card is not None:
                 openFile.write(card.write(originalPrefix=self.name, newPrefix=name))
 
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5.4 ')
+
         # Initiate write on each ProjectCard that belongs to this ProjectFile
         for card in self.projectCards:
             if card.name not in PRIORITY_CARDS:
                 openFile.write(card.write(originalPrefix=self.name, newPrefix=name))
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5.5 ')
 
     def appendDirectory(self, directory, projectFilePath):
         """

@@ -124,13 +124,17 @@ class GsshaPyFileObjectBase:
 
         with io_open(filePath, 'w') as openFile:
             # Write Lines
+            with open(debug_log, 'a') as debug:
+                debug.write(f'HERE 2.5 ')
             self._write(session=session,
                         openFile=openFile,
                         replaceParamFile=replaceParamFile,
                         **kwargs)
+            with open(debug_log, 'a') as debug:
+                debug.write(f'HERE 2.6 ')
 
         with open(debug_log, 'a') as debug:
-            debug.write(f'HERE 2.5 ')
+            debug.write(f'HERE 2.7 ')
 
     def _commit(self, session, errorMessage):
         """
