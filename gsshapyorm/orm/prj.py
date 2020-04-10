@@ -656,7 +656,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         self.project_directory = directory
 
         with open(debug_log, 'a') as debug:
-            debug.write(f'HERE 1')
+            debug.write(f'HERE 1 ')
 
         with tmp_chdir(directory):
             # Get param file for writing
@@ -664,25 +664,25 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
             # Write Project File
             with open(debug_log, 'a') as debug:
-                debug.write(f'HERE 2')
+                debug.write(f'HERE 2 ')
 
             self.write(session=session, directory=directory, name=name)
 
             # Write input files
             with open(debug_log, 'a') as debug:
-                debug.write(f'HERE 3')
+                debug.write(f'HERE 3 ')
 
             self._writeXput(session=session, directory=directory, fileCards=self.INPUT_FILES, name=name,
                             replaceParamFile=replaceParamFile)
 
             # Write input map files
             with open(debug_log, 'a') as debug:
-                debug.write(f'HERE 4')
+                debug.write(f'HERE 4 ')
 
             self._writeXputMaps(session=session, directory=directory, mapCards=self.INPUT_MAPS, name=name,
                                 replaceParamFile=replaceParamFile)
             with open(debug_log, 'a') as debug:
-                debug.write(f'HERE 5')
+                debug.write(f'HERE 5 ')
 
     def writeOutput(self, session, directory, name):
         """

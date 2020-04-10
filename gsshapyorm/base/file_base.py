@@ -89,7 +89,9 @@ class GsshaPyFileObjectBase:
             replaceParamFile (:class:`gsshapyorm.orm.ReplaceParamFile`, optional): ReplaceParamFile instance. Use this if
                 the file you are writing contains replacement parameters.
         """  # noqa: E501
-
+        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(self)}.log'
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.1 ')
         # Assemble Path to file
         name_split = name.split('.')
         name = name_split[0]
@@ -102,10 +104,14 @@ class GsshaPyFileObjectBase:
 
         # Run name preprocessor method if present
         try:
+            with open(debug_log, 'a') as debug:
+                debug.write(f'HERE 2.2 ')
             name = self._namePreprocessor(name)
         except Exception:
             'DO NOTHING'
 
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.3 ')
         if extension == '':
             filename = '{0}.{1}'.format(name, self.fileExtension)
         else:
@@ -113,12 +119,18 @@ class GsshaPyFileObjectBase:
 
         filePath = os.path.join(directory, filename)
 
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.4 ')
+
         with io_open(filePath, 'w') as openFile:
             # Write Lines
             self._write(session=session,
                         openFile=openFile,
                         replaceParamFile=replaceParamFile,
                         **kwargs)
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'HERE 2.5 ')
 
     def _commit(self, session, errorMessage):
         """
