@@ -325,10 +325,14 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
 
         # Write priority lines
         for card_key in PRIORITY_CARDS:
+            with open(debug_log, 'a') as debug:
+                debug.write(f'HERE 2.5.3.1 ')
             card = self.getCard(card_key)
 
             # Write the card
             if card is not None:
+                with open(debug_log, 'a') as debug:
+                    debug.write(f'HERE 2.5.3.2 ')
                 openFile.write(card.write(originalPrefix=self.name, newPrefix=name))
 
         with open(debug_log, 'a') as debug:
@@ -794,11 +798,23 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         Returns:
             :class:`.ProjectCard` or None: Project card object. Will return None if the card is not available.
         """
+        import os
+        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'GET CARDS 1 ')
+
         cards = self.projectCards
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'GET CARDS 2 ')
 
         for card in cards:
             if card.name.upper() == name.upper():
                 return card
+
+        with open(debug_log, 'a') as debug:
+            debug.write(f'GET CARDS 3 ')
 
         return None
 
