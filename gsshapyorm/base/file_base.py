@@ -89,7 +89,8 @@ class GsshaPyFileObjectBase:
             replaceParamFile (:class:`gsshapyorm.orm.ReplaceParamFile`, optional): ReplaceParamFile instance. Use this if
                 the file you are writing contains replacement parameters.
         """  # noqa: E501
-        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(self)}.log'
+        import os
+        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(os.getpid())}.log'
         with open(debug_log, 'a') as debug:
             debug.write(f'HERE 2.1 ')
         # Assemble Path to file

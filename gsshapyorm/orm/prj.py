@@ -304,7 +304,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         Project File Write to File Method
         """
-        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(self)}.log'
+        import os
+        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(os.getpid())}.log'
         with open(debug_log, 'a') as debug:
             debug.write(f'HERE 2.5.1 ')
         # Enforce cards that must be written in certain order
@@ -666,7 +667,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 'example.cmt', and 'example.gag'). Files that do not follow this convention will retain their original
                 file names.
         """  # noqa:E501
-        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(self)}.log'
+        import os
+        debug_log = f'/var/lib/condor/gsshapyorm/debug_gsshapy_{id(os.getpid())}.log'
         self.project_directory = directory
 
         with open(debug_log, 'a') as debug:
