@@ -668,7 +668,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
                 file names.
         """  # noqa:E501
         import os
-        os.mkdir('/var/lib/condor/debug_logs')
+        if not os.path.isdir('/var/lib/condor/debug_logs'):
+            os.mkdir('/var/lib/condor/debug_logs')
         debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
         self.project_directory = directory
 
