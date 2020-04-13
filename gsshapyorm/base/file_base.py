@@ -90,7 +90,7 @@ class GsshaPyFileObjectBase:
                 the file you are writing contains replacement parameters.
         """  # noqa: E501
         import os
-        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
+        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{os.getpid()}.log'
         with open(debug_log, 'a') as debug:
             debug.write(f'HERE 2.1 ')
         # Assemble Path to file

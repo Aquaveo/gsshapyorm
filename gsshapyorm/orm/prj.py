@@ -305,7 +305,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         Project File Write to File Method
         """
         import os
-        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
+        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{os.getpid()}.log'
         with open(debug_log, 'a') as debug:
             debug.write(f'HERE 2.5.1 ')
         # Enforce cards that must be written in certain order
@@ -674,7 +674,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         import os
         if not os.path.isdir('/var/lib/condor/debug_logs'):
             os.mkdir('/var/lib/condor/debug_logs')
-        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
+        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{os.getpid()}.log'
         self.project_directory = directory
 
         with open(debug_log, 'a') as debug:
@@ -799,7 +799,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             :class:`.ProjectCard` or None: Project card object. Will return None if the card is not available.
         """
         import os
-        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{id(os.getpid())}.log'
+        debug_log = f'/var/lib/condor/debug_logs/debug_gsshapy_{os.getpid()}.log'
 
         with open(debug_log, 'a') as debug:
             debug.write(f'GET CARDS 1 ')
