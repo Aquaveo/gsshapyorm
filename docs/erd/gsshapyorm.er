@@ -1,0 +1,454 @@
+[public.cif_links]
+    *id {label:"INTEGER"}
+    channelInputFileID {label:"INTEGER"}
+    linkNumber {label:"INTEGER"}
+    type {label:"VARCHAR"}
+    numElements {label:"INTEGER"}
+    dx {label:"DOUBLE PRECISION"}
+    erode {label:"BOOLEAN"}
+    subsurface {label:"BOOLEAN"}
+    downstreamLinkID {label:"INTEGER"}
+    numUpstreamLinks {label:"INTEGER"}
+    geometry {label:"Null"}
+[public.cif_channel_input_files]
+    *id {label:"INTEGER"}
+    alpha {label:"DOUBLE PRECISION"}
+    beta {label:"DOUBLE PRECISION"}
+    theta {label:"DOUBLE PRECISION"}
+    links {label:"INTEGER"}
+    maxNodes {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.spatial_ref_sys]
+    *srid {label:"INTEGER"}
+    auth_name {label:"VARCHAR(256)"}
+    auth_srid {label:"INTEGER"}
+    srtext {label:"VARCHAR(2048)"}
+    proj4text {label:"VARCHAR(2048)"}
+[public.spn_storm_pipe_network_files]
+    *id {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.spn_super_links]
+    *id {label:"INTEGER"}
+    stormPipeNetworkFileID {label:"INTEGER"}
+    slinkNumber {label:"INTEGER"}
+    numPipes {label:"INTEGER"}
+[public.gag_events]
+    *id {label:"INTEGER"}
+    precipFileID {label:"INTEGER"}
+    description {label:"VARCHAR"}
+    nrGag {label:"INTEGER"}
+    nrPds {label:"INTEGER"}
+[public.gag_precipitation_files]
+    *id {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.spn_super_junctions]
+    *id {label:"INTEGER"}
+    stormPipeNetworkFileID {label:"INTEGER"}
+    sjuncNumber {label:"INTEGER"}
+    groundSurfaceElev {label:"DOUBLE PRECISION"}
+    invertElev {label:"DOUBLE PRECISION"}
+    manholeSA {label:"DOUBLE PRECISION"}
+    inletCode {label:"INTEGER"}
+    linkOrCellI {label:"INTEGER"}
+    nodeOrCellJ {label:"INTEGER"}
+    weirSideLength {label:"DOUBLE PRECISION"}
+    orificeDiameter {label:"DOUBLE PRECISION"}
+[public.spn_connections]
+    *id {label:"INTEGER"}
+    stormPipeNetworkFileID {label:"INTEGER"}
+    slinkNumber {label:"INTEGER"}
+    upSjuncNumber {label:"INTEGER"}
+    downSjuncNumber {label:"INTEGER"}
+[public.cmt_map_table_files]
+    *id {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.idx_index_maps]
+    *id {label:"INTEGER"}
+    mapTableFileID {label:"INTEGER"}
+    north {label:"DOUBLE PRECISION"}
+    south {label:"DOUBLE PRECISION"}
+    east {label:"DOUBLE PRECISION"}
+    west {label:"DOUBLE PRECISION"}
+    rows {label:"INTEGER"}
+    columns {label:"INTEGER"}
+    srid {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    filename {label:"VARCHAR"}
+    rasterText {label:"VARCHAR"}
+    raster {label:"Null"}
+    fileExtension {label:"VARCHAR"}
+[public.hmet_files]
+    *id {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.hmet_records]
+    *id {label:"INTEGER"}
+    hmetConfigID {label:"INTEGER"}
+    hmetDateTime {label:"TIMESTAMP WITHOUT TIME ZONE"}
+    barometricPress {label:"DOUBLE PRECISION"}
+    relHumidity {label:"INTEGER"}
+    totalSkyCover {label:"INTEGER"}
+    windSpeed {label:"INTEGER"}
+    dryBulbTemp {label:"INTEGER"}
+    directRad {label:"DOUBLE PRECISION"}
+    globalRad {label:"DOUBLE PRECISION"}
+[public.snw_nwsrfs_files]
+    *id {label:"INTEGER"}
+    numBands {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.snw_nwsrfs_records]
+    *id {label:"INTEGER"}
+    nwsrfsFileID {label:"INTEGER"}
+    lowerElev {label:"INTEGER"}
+    upperElev {label:"INTEGER"}
+    mfMin {label:"DOUBLE PRECISION"}
+    mfMax {label:"DOUBLE PRECISION"}
+    scf {label:"DOUBLE PRECISION"}
+    frUse {label:"DOUBLE PRECISION"}
+    tipm {label:"DOUBLE PRECISION"}
+    nmf {label:"DOUBLE PRECISION"}
+    fua {label:"DOUBLE PRECISION"}
+    plwhc {label:"DOUBLE PRECISION"}
+[public.snw_orographic_gage_files]
+    *id {label:"INTEGER"}
+    numSites {label:"INTEGER"}
+    elevBase {label:"DOUBLE PRECISION"}
+    elev2 {label:"DOUBLE PRECISION"}
+    fileExtension {label:"VARCHAR"}
+[public.snw_orographic_measurements]
+    *id {label:"INTEGER"}
+    orthoGageID {label:"INTEGER"}
+    dateTime {label:"TIMESTAMP WITHOUT TIME ZONE"}
+    temp2 {label:"DOUBLE PRECISION"}
+[public.gpi_grid_pipe_files]
+    *id {label:"INTEGER"}
+    pipeCells {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.gpi_grid_pipe_cells]
+    *id {label:"INTEGER"}
+    gridPipeFileID {label:"INTEGER"}
+    cellI {label:"INTEGER"}
+    cellJ {label:"INTEGER"}
+    numPipes {label:"INTEGER"}
+[public.gst_grid_stream_files]
+    *id {label:"INTEGER"}
+    streamCells {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.gst_grid_stream_cells]
+    *id {label:"INTEGER"}
+    gridStreamFileID {label:"INTEGER"}
+    cellI {label:"INTEGER"}
+    cellJ {label:"INTEGER"}
+    numNodes {label:"INTEGER"}
+[public.rep_replace_param_files]
+    *id {label:"INTEGER"}
+    numParameters {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.rep_target_parameter]
+    *id {label:"INTEGER"}
+    replaceParamFileID {label:"INTEGER"}
+    targetVariable {label:"VARCHAR"}
+    varFormat {label:"VARCHAR"}
+[public.rep_replace_val_files]
+    *id {label:"INTEGER"}
+    values {label:"VARCHAR"}
+    fileExtension {label:"VARCHAR"}
+[public.rep_replace_val_lines]
+    *id {label:"INTEGER"}
+    replaceValFileID {label:"INTEGER"}
+    contents {label:"VARCHAR"}
+[public.prj_project_files]
+    *id {label:"INTEGER"}
+    precipFileID {label:"INTEGER"}
+    mapTableFileID {label:"INTEGER"}
+    channelInputFileID {label:"INTEGER"}
+    stormPipeNetworkFileID {label:"INTEGER"}
+    hmetFileID {label:"INTEGER"}
+    nwsrfsFileID {label:"INTEGER"}
+    orographicGageFileID {label:"INTEGER"}
+    gridPipeFileID {label:"INTEGER"}
+    gridStreamFileID {label:"INTEGER"}
+    projectionFileID {label:"INTEGER"}
+    replaceParamFileID {label:"INTEGER"}
+    replaceValFileID {label:"INTEGER"}
+    srid {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    mapType {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+    project_directory {label:"VARCHAR"}
+[public.pro_projection_files]
+    *id {label:"INTEGER"}
+    projection {label:"VARCHAR"}
+    fileExtension {label:"VARCHAR"}
+[public.lnd_link_node_dataset_files]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    channelInputFileID {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+    name {label:"VARCHAR"}
+    numLinks {label:"INTEGER"}
+    timeStepInterval {label:"INTEGER"}
+    numTimeSteps {label:"INTEGER"}
+    startTime {label:"VARCHAR"}
+[public.cmt_map_tables]
+    *id {label:"INTEGER"}
+    idxMapID {label:"INTEGER"}
+    mapTableFileID {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    numIDs {label:"INTEGER"}
+    maxNumCells {label:"INTEGER"}
+    numSed {label:"INTEGER"}
+    numContam {label:"INTEGER"}
+    maxSoilID {label:"INTEGER"}
+[public.cmt_indexes]
+    *id {label:"INTEGER"}
+    idxMapID {label:"INTEGER"}
+    index {label:"INTEGER"}
+    description1 {label:"VARCHAR(40)"}
+    description2 {label:"VARCHAR(40)"}
+[public.cmt_contaminants]
+    *id {label:"INTEGER"}
+    idxMapID {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    outputFilename {label:"VARCHAR"}
+    precipConc {label:"DOUBLE PRECISION"}
+    partition {label:"DOUBLE PRECISION"}
+    numIDs {label:"INTEGER"}
+[public.raster_maps]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    north {label:"DOUBLE PRECISION"}
+    south {label:"DOUBLE PRECISION"}
+    east {label:"DOUBLE PRECISION"}
+    west {label:"DOUBLE PRECISION"}
+    rows {label:"INTEGER"}
+    columns {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+    rasterText {label:"VARCHAR"}
+    raster {label:"Null"}
+    filename {label:"VARCHAR"}
+[public.project_file_event_manager]
+    *id {label:"INTEGER"}
+    project_file_id {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.gag_coord]
+    *id {label:"INTEGER"}
+    description {label:"VARCHAR"}
+    x {label:"DOUBLE PRECISION"}
+    y {label:"DOUBLE PRECISION"}
+[public.gag_assoc_event_gage]
+    gageID {label:"INTEGER"}
+    eventID {label:"INTEGER"}
+[public.gag_values]
+    *id {label:"INTEGER"}
+    eventID {label:"INTEGER"}
+    coordID {label:"INTEGER"}
+    valueType {label:"VARCHAR"}
+    dateTime {label:"TIMESTAMP WITHOUT TIME ZONE"}
+    value {label:"DOUBLE PRECISION"}
+[public.cif_upstream_links]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    upstreamLinkID {label:"INTEGER"}
+[public.cif_nodes]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    nodeNumber {label:"INTEGER"}
+    x {label:"DOUBLE PRECISION"}
+    y {label:"DOUBLE PRECISION"}
+    elevation {label:"DOUBLE PRECISION"}
+    geometry {label:"Null"}
+[public.cif_weirs]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    type {label:"VARCHAR"}
+    crestLength {label:"DOUBLE PRECISION"}
+    crestLowElevation {label:"DOUBLE PRECISION"}
+    dischargeCoeffForward {label:"DOUBLE PRECISION"}
+    dischargeCoeffReverse {label:"DOUBLE PRECISION"}
+    crestLowLocation {label:"DOUBLE PRECISION"}
+    steepSlope {label:"DOUBLE PRECISION"}
+    shallowSlope {label:"DOUBLE PRECISION"}
+[public.cif_culverts]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    type {label:"VARCHAR"}
+    upstreamInvert {label:"DOUBLE PRECISION"}
+    downstreamInvert {label:"DOUBLE PRECISION"}
+    inletDischargeCoeff {label:"DOUBLE PRECISION"}
+    reverseFlowDischargeCoeff {label:"DOUBLE PRECISION"}
+    slope {label:"DOUBLE PRECISION"}
+    length {label:"DOUBLE PRECISION"}
+    roughness {label:"DOUBLE PRECISION"}
+    diameter {label:"DOUBLE PRECISION"}
+    width {label:"DOUBLE PRECISION"}
+    height {label:"DOUBLE PRECISION"}
+[public.cif_reservoirs]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    initWSE {label:"DOUBLE PRECISION"}
+    minWSE {label:"DOUBLE PRECISION"}
+    maxWSE {label:"DOUBLE PRECISION"}
+[public.cif_breakpoint]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    mannings_n {label:"DOUBLE PRECISION"}
+    numPairs {label:"INTEGER"}
+    numInterp {label:"INTEGER"}
+    mRiver {label:"DOUBLE PRECISION"}
+    kRiver {label:"DOUBLE PRECISION"}
+    erode {label:"BOOLEAN"}
+    subsurface {label:"BOOLEAN"}
+    maxErosion {label:"DOUBLE PRECISION"}
+[public.cif_trapezoid]
+    *id {label:"INTEGER"}
+    linkID {label:"INTEGER"}
+    mannings_n {label:"DOUBLE PRECISION"}
+    bottomWidth {label:"DOUBLE PRECISION"}
+    bankfullDepth {label:"DOUBLE PRECISION"}
+    sideSlope {label:"DOUBLE PRECISION"}
+    mRiver {label:"DOUBLE PRECISION"}
+    kRiver {label:"DOUBLE PRECISION"}
+    erode {label:"BOOLEAN"}
+    subsurface {label:"BOOLEAN"}
+    maxErosion {label:"DOUBLE PRECISION"}
+[public.spn_super_nodes]
+    *id {label:"INTEGER"}
+    superLinkID {label:"INTEGER"}
+    nodeNumber {label:"INTEGER"}
+    groundSurfaceElev {label:"DOUBLE PRECISION"}
+    invertElev {label:"DOUBLE PRECISION"}
+    manholeSA {label:"DOUBLE PRECISION"}
+    nodeInletCode {label:"INTEGER"}
+    cellI {label:"INTEGER"}
+    cellJ {label:"INTEGER"}
+    weirSideLength {label:"DOUBLE PRECISION"}
+    orificeDiameter {label:"DOUBLE PRECISION"}
+[public.spn_pipes]
+    *id {label:"INTEGER"}
+    superLinkID {label:"INTEGER"}
+    pipeNumber {label:"INTEGER"}
+    xSecType {label:"INTEGER"}
+    diameterOrHeight {label:"DOUBLE PRECISION"}
+    width {label:"DOUBLE PRECISION"}
+    slope {label:"DOUBLE PRECISION"}
+    roughness {label:"DOUBLE PRECISION"}
+    length {label:"DOUBLE PRECISION"}
+    conductance {label:"DOUBLE PRECISION"}
+    drainSpacing {label:"DOUBLE PRECISION"}
+[public.gpi_grid_pipe_nodes]
+    *id {label:"INTEGER"}
+    gridPipeCellID {label:"INTEGER"}
+    linkNumber {label:"INTEGER"}
+    nodeNumber {label:"INTEGER"}
+    fractPipeLength {label:"DOUBLE PRECISION"}
+[public.gst_grid_stream_nodes]
+    *id {label:"INTEGER"}
+    gridStreamCellID {label:"INTEGER"}
+    linkNumber {label:"INTEGER"}
+    nodeNumber {label:"INTEGER"}
+    nodePercentGrid {label:"DOUBLE PRECISION"}
+[public.tim_time_series_files]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+[public.loc_output_location_files]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+    numLocations {label:"INTEGER"}
+[public.gen_generic_files]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    text {label:"VARCHAR"}
+    binary {label:"BYTEA"}
+    name {label:"VARCHAR"}
+    fileExtension {label:"VARCHAR"}
+[public.wms_dataset_files]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    type {label:"INTEGER"}
+    fileExtension {label:"VARCHAR"}
+    objectType {label:"VARCHAR"}
+    vectorType {label:"VARCHAR"}
+    objectID {label:"INTEGER"}
+    numberData {label:"INTEGER"}
+    numberCells {label:"INTEGER"}
+    name {label:"VARCHAR"}
+[public.prj_project_cards]
+    *id {label:"INTEGER"}
+    projectFileID {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    value {label:"VARCHAR"}
+[public.lnd_time_steps]
+    *id {label:"INTEGER"}
+    linkNodeDatasetFileID {label:"INTEGER"}
+    timeStep {label:"INTEGER"}
+[public.cmt_map_table_values]
+    *id {label:"INTEGER"}
+    mapTableID {label:"INTEGER"}
+    mapTableIndexID {label:"INTEGER"}
+    contaminantID {label:"INTEGER"}
+    variable {label:"VARCHAR"}
+    value {label:"DOUBLE PRECISION"}
+    layer_id {label:"INTEGER"}
+[public.cmt_sediments]
+    *id {label:"INTEGER"}
+    mapTableID {label:"INTEGER"}
+    description {label:"VARCHAR"}
+    specificGravity {label:"DOUBLE PRECISION"}
+    particleDiameter {label:"DOUBLE PRECISION"}
+    outputFilename {label:"VARCHAR"}
+[public.cmt_time_series_index]
+    *id {label:"INTEGER"}
+    mapTableID {label:"INTEGER"}
+    index {label:"VARCHAR"}
+    time_series_name {label:"VARCHAR"}
+[public.project_file_event]
+    *id {label:"INTEGER"}
+    project_file_event_manager_id {label:"INTEGER"}
+    name {label:"VARCHAR"}
+    subfolder {label:"VARCHAR"}
+[public.cif_reservoir_points]
+    *id {label:"INTEGER"}
+    reservoirID {label:"INTEGER"}
+    i {label:"INTEGER"}
+    j {label:"INTEGER"}
+[public.cif_bcs_points]
+    *id {label:"INTEGER"}
+    crossSectionID {label:"INTEGER"}
+    x {label:"DOUBLE PRECISION"}
+    y {label:"DOUBLE PRECISION"}
+[public.tim_time_series]
+    *id {label:"INTEGER"}
+    timeSeriesFileID {label:"INTEGER"}
+[public.loc_output_locations]
+    *id {label:"INTEGER"}
+    outputLocationFileID {label:"INTEGER"}
+    linkOrCellI {label:"INTEGER"}
+    nodeOrCellJ {label:"INTEGER"}
+[public.wms_dataset_rasters]
+    *id {label:"INTEGER"}
+    datasetFileID {label:"INTEGER"}
+    timeStep {label:"INTEGER"}
+    timestamp {label:"DOUBLE PRECISION"}
+    iStatus {label:"INTEGER"}
+    rasterText {label:"VARCHAR"}
+    raster {label:"Null"}
+[public.lnd_link_datasets]
+    *id {label:"INTEGER"}
+    timeStepID {label:"INTEGER"}
+    streamLinkID {label:"INTEGER"}
+    linkNodeDatasetFileID {label:"INTEGER"}
+    numNodeDatasets {label:"INTEGER"}
+[public.tim_time_series_values]
+    *id {label:"INTEGER"}
+    timeSeriesID {label:"INTEGER"}
+    simTime {label:"DOUBLE PRECISION"}
+    value {label:"DOUBLE PRECISION"}
+[public.lnd_node_datasets]
+    *id {label:"INTEGER"}
+    linkDatasetID {label:"INTEGER"}
+    streamNodeID {label:"INTEGER"}
+    linkNodeDatasetFileID {label:"INTEGER"}
+    status {label:"INTEGER"}
+    value {label:"DOUBLE PRECISION"}
