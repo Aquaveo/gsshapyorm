@@ -8,7 +8,7 @@ requires = [
     'numpy',
     'pandas',
     'psycopg2',
-    'sqlalchemy',
+    'sqlalchemy<2',
     'timezonefinder',
     'pyyaml'
 ]

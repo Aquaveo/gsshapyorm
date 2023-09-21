@@ -11,6 +11,7 @@ __all__ = ['WMSDatasetFile', 'WMSDatasetRaster']
 
 from datetime import datetime, timedelta
 import logging
+import json
 import os
 from zipfile import ZipFile
 
@@ -369,14 +370,17 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
 
                 # If spatial is enabled create PostGIS rasters
                 if spatial:
+                    # Validate array
+                    if not self._cellArrayIsValid(filename, timeStep, rows, columns, timeStepRaster):
+                        # Save raster text as fallback
+                        wmsRasterDatasetFile.rasterText = timeStepRaster['rasterText']
+                        continue
+
                     # Process the values/cell array
-                    wmsRasterDatasetFile.raster = RasterLoader.makeSingleBandWKBRaster(session,
-                                                                                       columns, rows,
-                                                                                       upperLeftX, upperLeftY,
-                                                                                       cellSizeX, cellSizeY,
-                                                                                       0, 0,
-                                                                                       spatialReferenceID,
-                                                                                       timeStepRaster['cellArray'])
+                    wmsRasterDatasetFile.raster = RasterLoader.makeSingleBandWKBRaster(
+                        session, columns, rows, upperLeftX, upperLeftY, cellSizeX, cellSizeY,
+                        0, 0, spatialReferenceID, timeStepRaster['cellArray']
+                    )
 
                 # Otherwise, set the raster text properties
                 else:
@@ -487,6 +491,31 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
             timeStampedRasters.append(timeStampedRaster)
 
         return timeStampedRasters
+
+    def _cellArrayIsValid(self, filename, timeStep, rows, columns, timeStepRaster):
+        """Compare the number of rows and columns in the cell array to the expected number of rows and columns."""
+        cellArray = json.loads(timeStepRaster['cellArray'])
+        irows = int(rows)
+        icolumns = int(columns)
+
+        if len(cellArray) != irows:
+            print(f'WARNING: The raster for timestep {timeStep} from WMS Dataset "{filename}" is invalid. '
+                  f'The number of rows in the raster ({len(cellArray)}) '
+                  f'does not match number of rows expected ({irows}).')
+            return False
+        
+        elif any([len(row) != icolumns for row in cellArray]):
+            bad_count = None
+            for row in cellArray:
+                if len(row) != icolumns:
+                    bad_count = len(row) 
+                    break
+            print(f'WARNING: The raster for timestep {timeStep} from WMS Dataset "{filename}" is invalid. '
+                  f'The number of columns in at least one of the rows in the raster ({bad_count}) '
+                  f'does not match number of columns expected ({icolumns}).')
+            return False
+
+        return True
 
 
 class WMSDatasetRaster(DeclarativeBase, RasterObjectBase):
