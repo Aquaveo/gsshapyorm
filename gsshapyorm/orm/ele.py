@@ -12,8 +12,6 @@ __all__ = ['ElevationGridFile']
 
 import os
 
-from osgeo import gdalconst
-
 from .map import RasterMapFile
 from ..util.context import tmp_chdir
 from ..util.optional import import_optional
@@ -44,7 +42,7 @@ class ElevationGridFile(RasterMapFile):
                            elevation_raster,
                            shapefile_path=None,
                            out_elevation_grid=None,
-                           resample_method=gdalconst.GRA_Average,
+                           resample_method=None,
                            load_raster_to_db=True):
         """
         Generates an elevation grid for the GSSHA simulation
@@ -82,6 +80,10 @@ class ElevationGridFile(RasterMapFile):
         """
         # Optional import
         gazar_grid = import_optional('gazar.grid', self.generateFromRaster)
+        osgeo = import_optional('osgeo', self.generateFromRaster)
+
+        if resample_method is None:
+            resample_method = osgeo.gdalconst.GRA_Average
 
         if not self.projectFile:
             raise ValueError("Must be connected to project file ...")
