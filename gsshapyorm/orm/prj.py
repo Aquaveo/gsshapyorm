@@ -19,7 +19,6 @@ import re
 import sys
 
 import numpy as np
-from osgeo import ogr, osr
 from pyproj import Proj, transform
 from pytz import timezone
 from shapely.wkb import loads as shapely_loads
@@ -1274,18 +1273,19 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         Calculate outlet location
         """
+        osgeo = import_optional('osgeo', self.findOutlet)
         # determine outlet from shapefile
         # by getting outlet from first point in polygon
 
         # make sure the boundary geometry is valid
         check_watershed_boundary_geometry(shapefile_path)
 
-        shapefile = ogr.Open(shapefile_path)
+        shapefile = osgeo.ogr.Open(shapefile_path)
         source_layer = shapefile.GetLayer(0)
         source_lyr_proj = source_layer.GetSpatialRef()
-        osr_geographic_proj = osr.SpatialReference()
+        osr_geographic_proj = osgeo.osr.SpatialReference()
         osr_geographic_proj.ImportFromEPSG(4326)
-        proj_transform = osr.CoordinateTransformation(source_lyr_proj,
+        proj_transform = osgeo.osr.CoordinateTransformation(source_lyr_proj,
                                                       osr_geographic_proj)
         boundary_feature = source_layer.GetFeature(0)
         feat_geom = boundary_feature.GetGeometryRef()

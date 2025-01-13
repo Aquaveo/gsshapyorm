@@ -21,7 +21,6 @@ import logging
 
 import numpy as np
 import pandas as pd
-from osgeo import gdalconst
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, Float, String
 from sqlalchemy.orm import relationship
@@ -683,6 +682,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         """
         # Optional import
         gazar_grid = import_optional('gazar.grid', self.addRoughnessMapFromLandUse)
+        osgeo = import_optional('osgeo', self.addRoughnessMapFromLandUse)
 
         LAND_USE_GRID_TABLES = {
             'nga': 'land_cover_nga.txt',
@@ -717,7 +717,7 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         # resample land use grid to gssha grid
         land_use_resampled = gazar_grid.resample_grid(land_use_grid,
                                                       self.projectFile.getGrid(),
-                                                      resample_method=gdalconst.GRA_NearestNeighbour,
+                                                      resample_method=osgeo.gdalconst.GRA_NearestNeighbour,
                                                       as_gdal_grid=True)
 
         unique_land_use_ids = np.unique(land_use_resampled.np_array())
