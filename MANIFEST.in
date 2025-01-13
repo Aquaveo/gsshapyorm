@@ -1,5 +1,15 @@
 prune docs
 prune tests
 prune notebooks
+prune sql
+prune sld
+prune .github
+exclude .gitignore
+exclude .travis.yml
+exclude .stickler.yml
+exclude appveyor.yml
+exclude conda_env.yml
+exclude readthedocs.yml
+exclude tox.ini
 include LICENSE.txt
 include README.md
