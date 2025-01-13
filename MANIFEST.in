@@ -1,4 +1,5 @@
 prune docs
 prune tests
+prune notebooks
 include LICENSE.txt
 include README.md

@@ -99,3 +99,4 @@ ENV/
 .idea
 
 !gsshapyorm/lib
+gsshapyorm/_version.py

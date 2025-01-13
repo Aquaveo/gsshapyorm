@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gsshapyorm"
+description = "An SQLAlchemy ORM for GSSHA model files."
+readme = "README.md"
+dynamic = ["version"]
+authors = [
+    {name = "Nathan Swain", email = "nswain@aquaveo.com"},
+    {name = "Alan D. Snow"},
+    {name = "Scott D. Christensen"},
+]
+urls = {home = "https://github.com/Aquaveo/gsshapyorm"}
+license = {file = "LICENSE.txt"}
+keywords = [
+    "GSSHA",
+    "database",
+    "object relational model"
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "appdirs",
+    "geopandas",
+    "mapkit>=1.2.6",
+    "numpy",
+    "pandas",
+    "psycopg2",
+    "sqlalchemy<2",
+    "timezonefinder",
+    "pyyaml",
+    "setuptools_scm",
+]
+
+[project.optional-dependencies]
+tests = [
+    "coveralls",
+    "pytest",
+    "pytest-cov",
+]
+docs = [
+    "mock",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-napoleon",
+]
+grid = ["gazar"]
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.setuptools_scm]
+version_file = "gsshapyorm/_version.py"

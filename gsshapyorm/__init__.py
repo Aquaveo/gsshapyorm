@@ -7,5 +7,3 @@
 ********************************************************************************
 """
 from .util import log_to_file, log_to_console, version  # noqa:F401
-
-__version__ = version()

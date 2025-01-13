@@ -9,4 +9,8 @@
 
 
 def version():
-    return '0.3.3'
+    try:
+        from .._version import __version__
+        return __version__
+    except ImportError:
+        return "0.0.0"
