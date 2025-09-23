@@ -1888,8 +1888,8 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
             # stay the same
             filename = originalFilename
 
-        elif originalPrefix == originalProjectName and pro:
-            # Handle renaming of projection file
+        elif pro:
+            # Always rename projection files to match the new project name
             filename = '%s_prj.%s' % (name, extension)
 
         elif originalPrefix == originalProjectName:
