@@ -276,6 +276,75 @@ def _buildVarList(sline, mapTableName, numVars):
     return varList
 
 
+def permafrostChunk(key, chunk):
+    """
+    Parse PERMAFROST_LAYER_SOIL mapping table chunk.
+
+    This table has special parameters like MAX_NUMBER_LAYERS, DN_INIT_MAX, DN_MAX,
+    and file references for INIT_TEMP_FILE, DEP_NODE_FILE, OUT_NODE_FILE.
+    """
+    # Global variables
+    numVars = {'NUM_IDS': None,
+               'MAX_NUMBER_CELLS': None,
+               'NUM_SED': None,
+               'NUM_CONTAM': None,
+               'MAX_SOIL_ID': None}
+    permafrostVars = {'MAX_NUMBER_LAYERS': None,
+                      'DN_INIT_MAX': None,
+                      'DN_MAX': None,
+                      'INIT_TEMP_FILE': None,
+                      'DEP_NODE_FILE': None,
+                      'OUT_NODE_FILE': None}
+    varList = []
+    valueList = []
+
+    # Extract MapTable Name and Index Map Name
+    mtName = shlex.split(chunk[0])[0]
+    idxName = shlex.split(chunk[0])[1] if len(shlex.split(chunk[0])) > 1 else ''
+
+    # Check if the table is empty (NUM_IDS = 0)
+    # If empty, we still need to process it but not read value lines
+    num_ids = None
+
+    # Parse the chunk into a datastructure
+    for line in chunk:
+        sline = line.strip().split()
+        if not sline:
+            continue
+        token = sline[0]
+
+        if token == key:
+            # Already extracted above
+            pass
+        elif token in numVars:
+            # Extract NUM type variables
+            numVars[token] = sline[1]
+            if token == 'NUM_IDS':
+                num_ids = int(sline[1])
+        elif token in permafrostVars:
+            # Extract permafrost-specific variables
+            permafrostVars[token] = sline[1]
+        elif token == 'ID':
+            # Extract variable names from header line
+            varList = _buildVarList(sline=sline, mapTableName=mtName, numVars=numVars)
+        else:
+            # Only extract value lines if NUM_IDS > 0
+            if num_ids is not None and num_ids > 0:
+                valDict = _extractValues(line)
+                valueList.append(valDict)
+
+    # Create return/result object
+    result = {'name': mtName,
+              'indexMapName': idxName,
+              'numVars': numVars,
+              'permafrostVars': permafrostVars,
+              'varList': varList,
+              'valueList': valueList,
+              'contaminants': None}
+
+    return result
+
+
 def _extractValues(line):
     valDict = dict()
     # Extract value line via slices
