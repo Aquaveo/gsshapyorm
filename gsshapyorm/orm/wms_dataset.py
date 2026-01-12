@@ -503,12 +503,12 @@ class WMSDatasetFile(DeclarativeBase, GsshaPyFileObjectBase):
                   f'The number of rows in the raster ({len(cellArray)}) '
                   f'does not match number of rows expected ({irows}).')
             return False
-        
+
         elif any([len(row) != icolumns for row in cellArray]):
             bad_count = None
             for row in cellArray:
                 if len(row) != icolumns:
-                    bad_count = len(row) 
+                    bad_count = len(row)
                     break
             print(f'WARNING: The raster for timestep {timeStep} from WMS Dataset "{filename}" is invalid. '
                   f'The number of columns in at least one of the rows in the raster ({bad_count}) '

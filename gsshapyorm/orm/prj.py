@@ -1286,7 +1286,7 @@ class ProjectFile(DeclarativeBase, GsshaPyFileObjectBase):
         osr_geographic_proj = osgeo.osr.SpatialReference()
         osr_geographic_proj.ImportFromEPSG(4326)
         proj_transform = osgeo.osr.CoordinateTransformation(source_lyr_proj,
-                                                      osr_geographic_proj)
+                                                            osr_geographic_proj)
         boundary_feature = source_layer.GetFeature(0)
         feat_geom = boundary_feature.GetGeometryRef()
         feat_geom.Transform(proj_transform)

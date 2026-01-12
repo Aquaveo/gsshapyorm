@@ -13,7 +13,8 @@ __all__ = ['MapTableFile',
            'MTValue',
            'MTIndex',
            'MTContaminant',
-           'MTSediment']
+           'MTSediment',
+           'MTPermafrost']
 
 from io import open as io_open
 import os
@@ -109,7 +110,8 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                     'MULTI_LAYER_SOIL': mtc.mapTableChunk,
                     'SOIL_EROSION_PROPS': mtc.mapTableChunk,
                     'CONTAMINANT_TRANSPORT': mtc.contamChunk,
-                    'SEDIMENTS': mtc.sedimentChunk}
+                    'SEDIMENTS': mtc.sedimentChunk,
+                    'PERMAFROST_LAYER_SOIL': mtc.permafrostChunk}
 
         indexMaps = dict()
         mapTables = []
@@ -197,6 +199,11 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
                                             mapTable=mapTable,
                                             contaminants=contaminants,
                                             replaceParamFile=replaceParamFile)
+            elif mapTable.name == 'PERMAFROST_LAYER_SOIL':
+                self._writePermafrostTable(session=session,
+                                           fileObject=openFile,
+                                           mapTable=mapTable,
+                                           replaceParamFile=replaceParamFile)
             elif mapTable.name == 'TIME_SERIES_INDEX':
                 self._writeTimeSeriesIndex(session=session,
                                            fileObject=openFile,
@@ -292,6 +299,29 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
 
                         # Associate the MTSediment with the MapTable
                         sediment.mapTable = mapTable
+
+                # PERMAFROST_LAYER_SOIL map table handler
+                elif mt['name'] == 'PERMAFROST_LAYER_SOIL':
+                    # Create GSSHAPY MTPermafrost object with special parameters
+                    pf_vars = mt['permafrostVars']
+                    permafrost = MTPermafrost(
+                        maxNumberLayers=int(pf_vars['MAX_NUMBER_LAYERS']) if pf_vars['MAX_NUMBER_LAYERS'] else None,
+                        dnInitMax=int(pf_vars['DN_INIT_MAX']) if pf_vars['DN_INIT_MAX'] else None,
+                        dnMax=int(pf_vars['DN_MAX']) if pf_vars['DN_MAX'] else None,
+                        initTempFile=pf_vars['INIT_TEMP_FILE'],
+                        depNodeFile=pf_vars['DEP_NODE_FILE'],
+                        outNodeFile=pf_vars['OUT_NODE_FILE']
+                    )
+
+                    # Associate the MTPermafrost with the MapTable
+                    permafrost.mapTable = mapTable
+
+                    # Create MTValue and MTIndex objects if there are values
+                    if mt['indexMapName'] and mt['indexMapName'] in indexMaps:
+                        indexMap = indexMaps[mt['indexMapName']]
+                        mapTable.indexMap = indexMap
+                        self._createValueObjects(mt['valueList'], mt['varList'], mapTable, indexMap,
+                                                 None, replaceParamFile)
 
                 elif mt['name'] == 'TIME_SERIES_INDEX':
                     for line in mt['valueList']:
@@ -499,6 +529,37 @@ class MapTableFile(DeclarativeBase, GsshaPyFileObjectBase):
         for ts in time_series_indices:
             spaces = 6 - len(ts.index)
             fileObject.write(f'{ts.index}{" " * spaces}{ts.time_series_name}\n')
+
+    def _writePermafrostTable(self, session, fileObject, mapTable, replaceParamFile):
+        """
+        Write Permafrost Layer Soil Mapping Table Method
+
+        This method writes the PERMAFROST_LAYER_SOIL special mapping table case.
+        """
+        # Get the permafrost parameters
+        permafrost = mapTable.permafrost
+
+        # Write the permafrost mapping table header
+        fileObject.write('%s "%s"\n' % (mapTable.name, mapTable.indexMap.name if mapTable.indexMap else ''))
+        fileObject.write('NUM_IDS %s\n' % (mapTable.numIDs))
+
+        # Write permafrost-specific parameters
+        if permafrost:
+            if permafrost.maxNumberLayers is not None:
+                fileObject.write('MAX_NUMBER_LAYERS %s\n' % permafrost.maxNumberLayers)
+            if permafrost.dnInitMax is not None:
+                fileObject.write('DN_INIT_MAX %s\n' % permafrost.dnInitMax)
+            if permafrost.dnMax is not None:
+                fileObject.write('DN_MAX %s\n' % permafrost.dnMax)
+            if permafrost.initTempFile:
+                fileObject.write('INIT_TEMP_FILE %s\n' % permafrost.initTempFile)
+            if permafrost.depNodeFile:
+                fileObject.write('DEP_NODE_FILE %s\n' % permafrost.depNodeFile)
+            if permafrost.outNodeFile:
+                fileObject.write('OUT_NODE_FILE %s\n' % permafrost.outNodeFile)
+
+        # Write value lines
+        self._writeValues(session, fileObject, mapTable, None, replaceParamFile)
 
     def _valuePivot(self, session, mapTable, contaminant, replaceParaFile):
         """
@@ -806,6 +867,8 @@ class MapTable(DeclarativeBase):
                              cascade='all, delete, delete-orphan')  #: RELATIONSHIP
     time_series_indices = relationship('MTTimeSeriesIndex', back_populates='mapTable',
                                        cascade='all, delete, delete-orphan')  #: RELATIONSHIP
+    permafrost = relationship('MTPermafrost', back_populates='mapTable', uselist=False,
+                              cascade='all, delete, delete-orphan')  #: RELATIONSHIP
 
     def __init__(self, name, numIDs=None, maxNumCells=None, numSed=None, numContam=None, maxSoilID=None):
         """
@@ -1049,3 +1112,60 @@ class MTTimeSeriesIndex(DeclarativeBase):
     def __eq__(self, other):
         return (self.index == other.index and
                 self.time_series_name == other.time_series_name)
+
+
+class MTPermafrost(DeclarativeBase):
+    """
+    Object containing data in permafrost layer soil type mapping tables.
+
+    This special mapping table has additional parameters for permafrost modeling:
+    - MAX_NUMBER_LAYERS: Maximum number of soil layers
+    - DN_INIT_MAX: Maximum initial depth node
+    - DN_MAX: Maximum depth node
+    - INIT_TEMP_FILE: Initial temperature file
+    - DEP_NODE_FILE: Depth node file
+    - OUT_NODE_FILE: Output node file
+    """
+    __tablename__ = 'cmt_permafrost'
+
+    tableName = __tablename__  #: Database tablename
+
+    # Primary and Foreign Keys
+    id = Column(Integer, autoincrement=True, primary_key=True)  #: PK
+    mapTableID = Column(Integer, ForeignKey('cmt_map_tables.id'))  #: FK
+
+    # Value Columns
+    maxNumberLayers = Column(Integer)  #: INTEGER
+    dnInitMax = Column(Integer)  #: INTEGER
+    dnMax = Column(Integer)  #: INTEGER
+    initTempFile = Column(String)  #: STRING
+    depNodeFile = Column(String)  #: STRING
+    outNodeFile = Column(String)  #: STRING
+
+    # Relationship Properties
+    mapTable = relationship('MapTable', back_populates='permafrost', uselist=False)  #: RELATIONSHIP
+
+    def __init__(self, maxNumberLayers=None, dnInitMax=None, dnMax=None,
+                 initTempFile=None, depNodeFile=None, outNodeFile=None):
+        """
+        Constructor
+        """
+        self.maxNumberLayers = maxNumberLayers
+        self.dnInitMax = dnInitMax
+        self.dnMax = dnMax
+        self.initTempFile = initTempFile
+        self.depNodeFile = depNodeFile
+        self.outNodeFile = outNodeFile
+
+    def __repr__(self):
+        return f'<MTPermafrost: MaxLayers={self.maxNumberLayers}, DnInitMax={self.dnInitMax}, ' \
+               f'DnMax={self.dnMax}, InitTempFile={self.initTempFile}, ' \
+               f'DepNodeFile={self.depNodeFile}, OutNodeFile={self.outNodeFile}>'
+
+    def __eq__(self, other):
+        return (self.maxNumberLayers == other.maxNumberLayers and
+                self.dnInitMax == other.dnInitMax and
+                self.dnMax == other.dnMax and
+                self.initTempFile == other.initTempFile and
+                self.depNodeFile == other.depNodeFile and
+                self.outNodeFile == other.outNodeFile)
